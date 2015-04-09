@@ -39,51 +39,113 @@
 
 void Main()
 {
+//	FilterTweets();
 	SummarizeTweets();
+}
+
+void FilterTweets()
+{
+	var path = @"C:\Dev\CWCTwitter\tweets.20150326.085220.json";
+	var outputPath = @"C:\Dev\CWCTwitter\fulltweets.duringmatch.json";
+	var tweetJsons = FileLines(path);
+
+	var count = 0;
+	
+	var tweets = tweetJsons.Select(js => new TweetEvent { Json = js, Tweet = Tweet.TweetFactory.GenerateTweetFromJson(js) })
+						   .Where(te => te.Tweet != null)
+						   .Do(te => {
+						   			if (++count % 10000 == 0)
+										te.Tweet.CreatedAt.Dump();
+									})
+						   .DuringMatchPlay()
+						   .ExcludeNonEnglish()
+						   .Select(te => te.Json);
+						   
+	var writer = new StreamWriter(outputPath);
+	writer.AutoFlush = true;
+	
+	tweets.Finally(() => writer.Dispose())
+		  .ForEach(t => writer.WriteLine(t));
 }
 
 void SummarizeTweets()
 {
-	var path = @"C:\Dev\CWCTwitter\tweets.20150326.085220.json";
-	var outputPath = @"C:\Dev\CWCTwitter\tweets.summarized.newtonsoft.json";
-	var tweetJsons = FileLines(path).Take(200);
+	var path = @"C:\Dev\CWCTwitter\fulltweets.duringmatch.json";
+	var outputPath = @"C:\Dev\CWCTwitter\duringmatch.notext.sample10.json";
+	var tweetJsons = FileLines(path);
+
+	var count = 0;
 	
-	var tweets = tweetJsons.Select(js => Tweet.TweetFactory.GenerateTweetFromJson(js))
-						   .Where(t => t != null);
+	var tweets = tweetJsons.Select(js => new TweetEvent { Json = js, Tweet = Tweet.TweetFactory.GenerateTweetFromJson(js) })
+						   .Where(te => te.Tweet != null)
+						   .Do(t => {
+						   			if (++count % 10000 == 0)
+										string.Format("{0}: {1}", count, t.Tweet.CreatedAt).Dump();
+									})
+						   .Sample(i => i % 10 == 0)
+						   .Select(te => te.Tweet);
 	
-	ITweet twt;
+	var summaryFlags = TweetSummaryFlags.Minimal;
+	var summarizedTweets = tweets.Select(t => SummarizeTweet(t, summaryFlags));
 	
-	var summarizedTweets = tweets.Select(SummarizeTweet);
-	
-//	summarizedTweets
-//		.Where(t => t.IsRetweet)
-//		.Take(5)
-//		.Dump();
-		
-//	var jsSerializer = new JavaScriptSerializer();
-//	var jsonOutput = summarizedTweets.Select(jsSerializer.Serialize);
-	var serializerSettings = new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.IsoDateFormat, DateTimeZoneHandling = DateTimeZoneHandling.Utc };
+	var serializerSettings = new JsonSerializerSettings {
+															DateFormatHandling = DateFormatHandling.IsoDateFormat,
+															DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+															NullValueHandling = NullValueHandling.Ignore
+														};
 	var jsonOutput = summarizedTweets.Select(t => JsonConvert.SerializeObject(t, serializerSettings));
 	
-	using (var writer = new StreamWriter(outputPath))
-	{
-		jsonOutput.ForEach(t => writer.WriteLine(t));
-	}
+	var writer = new StreamWriter(outputPath);
+	writer.AutoFlush = true;
+	
+	jsonOutput.Finally(() => writer.Dispose())
+			  .ForEach(t => writer.WriteLine(t));
 }
 
-private TweetSummary SummarizeTweet(ITweet t)
+public class TweetEvent
 {
-	return new TweetSummary {
+	public string Json { get; set; }
+	public ITweet Tweet { get; set; }
+}
+
+private TweetSummary SummarizeTweet(ITweet t, TweetSummaryFlags flags)
+{
+	var summary = new TweetSummary {
 			CreatedAt = t.CreatedAt,
-			Friends = t.Creator.FriendsCount,
 			ScreenName = t.Creator.ScreenName,
-			Text = t.Text,
-			IsRetweet = t.IsRetweet,
-			Hashtags = t.Hashtags.Select(ht => ht.Text).ToList(),
-			Mentions = t.UserMentions.Select(m => m.ScreenName).ToList(),
-			RetweetedTweet = t.RetweetedTweet != null ? SummarizeTweet(t.RetweetedTweet) : null,
-			RetweetCount = t.RetweetCount
 		};
+		
+	if ((flags & TweetSummaryFlags.IncludeText) == TweetSummaryFlags.IncludeText)
+		summary.Text = t.Text;
+		
+	if ((flags & TweetSummaryFlags.IncludeRetweetedTweet) == TweetSummaryFlags.IncludeRetweetedTweet)
+	{
+		summary.RetweetedTweet = t.RetweetedTweet != null ? SummarizeTweet(t.RetweetedTweet, flags) : null;
+		summary.RetweetCount = t.RetweetCount;
+		summary.IsRetweet = t.IsRetweet;
+	}
+
+	if ((flags & TweetSummaryFlags.IncludeHashtags) == TweetSummaryFlags.IncludeHashtags)
+		summary.Hashtags = t.Hashtags.Select(ht => ht.Text).ToList();
+
+	if ((flags & TweetSummaryFlags.IncludeMentions) == TweetSummaryFlags.IncludeMentions)
+		summary.Mentions = t.UserMentions.Select(m => m.ScreenName).ToList();
+		
+	if ((flags & TweetSummaryFlags.Minimal) != TweetSummaryFlags.Minimal)
+		summary.Friends = t.Creator.FriendsCount;
+		
+	return summary;
+}
+
+public enum TweetSummaryFlags
+{
+	Minimal = 0,
+	IncludeText = 1,
+	IncludeRetweetedTweet = 2,
+	IncludeHashtags = 4,
+	IncludeMentions = 8,
+	
+	All = int.MaxValue
 }
 
 public class TweetSummary
@@ -99,6 +161,34 @@ public class TweetSummary
 	public int RetweetCount { get; set; }
 }
 
+public static class TweetStreamEx
+{
+	public static IEnumerable<TweetEvent> ExcludeNonEnglish(this IEnumerable<TweetEvent> tweets)
+	{
+		return tweets.Where(t => t.Tweet.Language == Tweetinvi.Core.Enum.Language.Undefined || t.Tweet.Language == Tweetinvi.Core.Enum.Language.English);
+	}
+
+	public static IEnumerable<TweetEvent> ExcludeRetweets(this IEnumerable<TweetEvent> tweets)
+	{
+		return tweets.Where(t => !t.Tweet.IsRetweet);
+	}
+	
+	public static IEnumerable<TweetEvent> DuringMatchPlay(this IEnumerable<TweetEvent> allTweets)
+	{
+		var startTime = new DateTime(2015, 03, 26, 14, 00, 00);
+		var endTime = new DateTime(2015, 03, 26, 23, 30, 00);
+		
+		return allTweets.SkipWhile(t => t.Tweet.CreatedAt < startTime)
+						.TakeWhile(t => t.Tweet.CreatedAt < endTime);
+	}
+
+	public static IEnumerable<TweetEvent> Sample(this IEnumerable<TweetEvent> allTweets, Func<int, bool> sampler)
+	{
+		return allTweets.Where((t, i) => sampler(i));
+	}
+
+}
+
 IEnumerable<string> FileLines(string filePath)
 {
 	using (var reader = new StreamReader(filePath))
@@ -109,17 +199,3 @@ IEnumerable<string> FileLines(string filePath)
 		}
 	}
 }
-
-void SummarizeFile()
-{
-	var path = @"C:\Dev\CWCTwitter\tweets.20150326.085220.json";
-	var output = @"C:\Dev\CWCTwitter\tweets.summary.json";
-	using (var reader = new StreamReader(path))
-	using (var writer = new StreamWriter(output))
-	{
-		Enumerable.Range(0, 5).ForEach(_ => writer.WriteLine(reader.ReadLine()));
-	}
-	
-}
-
-// Define other methods and classes here
