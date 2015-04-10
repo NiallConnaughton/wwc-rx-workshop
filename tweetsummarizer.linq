@@ -71,7 +71,7 @@ void FilterTweets()
 void SummarizeTweets()
 {
 	var path = @"C:\Dev\CWCTwitter\fulltweets.duringmatch.json";
-	var outputPath = @"C:\Dev\CWCTwitter\duringmatch.notext.sample10.json";
+	var outputPath = @"C:\Dev\CWCTwitter\fullmatch.notext.sample10.json";
 	var tweetJsons = FileLines(path);
 
 	var count = 0;
@@ -86,7 +86,8 @@ void SummarizeTweets()
 						   .Select(te => te.Tweet);
 	
 	var summaryFlags = TweetSummaryFlags.Minimal;
-	var summarizedTweets = tweets.Select(t => SummarizeTweet(t, summaryFlags));
+	var summarizedTweets = tweets.Select(t => TimestampTweet(t));
+//	var summarizedTweets = tweets.Select(t => SummarizeTweet(t, summaryFlags));
 	
 	var serializerSettings = new JsonSerializerSettings {
 															DateFormatHandling = DateFormatHandling.IsoDateFormat,
@@ -106,6 +107,11 @@ public class TweetEvent
 {
 	public string Json { get; set; }
 	public ITweet Tweet { get; set; }
+}
+
+private TweetTimestamp TimestampTweet(ITweet t)
+{
+	return new TweetTimestamp { CreatedAt = t.CreatedAt, ScreenName = t.Creator.ScreenName };
 }
 
 private TweetSummary SummarizeTweet(ITweet t, TweetSummaryFlags flags)
@@ -146,6 +152,12 @@ public enum TweetSummaryFlags
 	IncludeMentions = 8,
 	
 	All = int.MaxValue
+}
+
+public class TweetTimestamp
+{
+	public DateTime CreatedAt { get; set; }
+	public string ScreenName { get; set; }
 }
 
 public class TweetSummary
