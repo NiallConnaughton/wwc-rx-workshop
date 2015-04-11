@@ -1,21 +1,3 @@
-function comparer(x, y) {
-    if (x > y) { return 1; }
-    if (x < y) { return -1; }
-    return 0;
-}
-
-function addSchedulerTime(absolute, relative) {
-    return absolute + relative;
-};
-
-function toDateTimeOffset (absolute) {
-    return new Date(absolute).getTime();
-};
-
-function toRelative (timeSpan) {
-    return timeSpan;
-};
-
 function runTweetStream() {
     var fileInput = document.getElementById('files');
     var file = fileInput.files[0];
@@ -36,10 +18,7 @@ function runTweetStream() {
         
         startTime = tweets[0].timestamp;
 
-        var scheduler = new Rx.VirtualTimeScheduler(0, comparer);
-        scheduler.add = addSchedulerTime;
-        scheduler.toDateTimeOffset = toDateTimeOffset;
-        scheduler.toRelative = toRelative;
+        var scheduler = new ReplayScheduler().scheduler;
         scheduler.advanceTo(startTime);
 
         var tweetStream = Rx.Observable.for(tweets, function (t) {
