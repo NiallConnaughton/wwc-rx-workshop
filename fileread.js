@@ -18,7 +18,8 @@ function runTweetStream() {
         
         startTime = tweets[0].timestamp;
 
-        var scheduler = new ReplayScheduler().scheduler;
+        var schedulerProvider = new ReplayScheduler();
+        var scheduler = schedulerProvider.scheduler;
         scheduler.advanceTo(startTime);
 
         var tweetStream = Rx.Observable.for(tweets, function (t) {
@@ -28,17 +29,14 @@ function runTweetStream() {
         .share();
 
         tweetSubscription = new Rx.CompositeDisposable();
+        tweetSubscription.add(schedulerProvider.stop);
 
         tweetSubscription.add(tweetStream.subscribe(function (t) {
             console.log(t.timestamp.toDate() + " - " + t.ScreenName);
         }));
 
-        tweetSubscription.add(
-            Rx.Observable.interval(1000)
-                         .subscribe(function() {
-                                            scheduler.advanceBy(1000 * multiplier);
-                                            nowSpan.innerText = moment(scheduler.now()).format('YYYY-MM-DD HH:mm:ss');
-                         }));
+        schedulerProvider.timeChanged = function (now) { nowSpan.innerText = moment(now).format('YYYY-MM-DD HH:mm:ss'); }
+        schedulerProvider.start();
 
         var tweetsPerMinute = tweetStream.window(Rx.Observable.interval(60000, scheduler))
                    .map(function (minuteTweet) {
