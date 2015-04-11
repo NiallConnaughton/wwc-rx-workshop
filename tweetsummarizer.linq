@@ -76,13 +76,13 @@ void SummarizeTweets()
 
 	var count = 0;
 	
-	var tweets = tweetJsons.Select(js => new TweetEvent { Json = js, Tweet = Tweet.TweetFactory.GenerateTweetFromJson(js) })
+	var tweets = tweetJsons.Sample(i => i % 10 == 0)
+						   .Select(js => new TweetEvent { Json = js, Tweet = Tweet.TweetFactory.GenerateTweetFromJson(js) })
 						   .Where(te => te.Tweet != null)
 						   .Do(t => {
 						   			if (++count % 10000 == 0)
 										string.Format("{0}: {1}", count, t.Tweet.CreatedAt).Dump();
 									})
-						   .Sample(i => i % 10 == 0)
 						   .Select(te => te.Tweet);
 	
 	var summaryFlags = TweetSummaryFlags.Minimal;
@@ -194,7 +194,7 @@ public static class TweetStreamEx
 						.TakeWhile(t => t.Tweet.CreatedAt < endTime);
 	}
 
-	public static IEnumerable<TweetEvent> Sample(this IEnumerable<TweetEvent> allTweets, Func<int, bool> sampler)
+	public static IEnumerable<T> Sample<T>(this IEnumerable<T> allTweets, Func<int, bool> sampler)
 	{
 		return allTweets.Where((t, i) => sampler(i));
 	}
