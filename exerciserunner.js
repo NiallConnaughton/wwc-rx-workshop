@@ -1,5 +1,4 @@
-function ExerciseRunner(exerciseImplementations) {
-    this.exerciseImplementations = exerciseImplementations;
+function ExerciseRunner() {
 }
 
 ExerciseRunner.prototype.stopTweetStream = function() {
@@ -26,6 +25,7 @@ ExerciseRunner.prototype.setupEventHandlers = function() {
 
     this.tpmSpan = document.getElementById('tpm');
     this.latestTweetSpan = document.getElementById('latestTweet');
+    this.useSampleSolutions = document.getElementById('useSampleSolutions');
 }
 
 ExerciseRunner.prototype.createTweetStream = function() {
@@ -56,9 +56,12 @@ ExerciseRunner.prototype.runTweetStream = function() {
     this.multiplierChanged();
     this.tweetStream.start();
 
+    var useSolution = this.useSampleSolutions.checked;
+    var exerciseImplementations = useSolution ? new ExerciseSolutions() : new Exercises();
+
     var scheduler = this.tweetStream.schedulerProvider.scheduler;
-    var tweetsPerMinute = this.exerciseImplementations.tweetsPerMinute(this.tweetStream.stream, scheduler);
-    var latestTweetDetails = this.exerciseImplementations.recentActivity(this.tweetStream.stream, scheduler);
+    var tweetsPerMinute = exerciseImplementations.tweetsPerMinute(this.tweetStream.stream, scheduler);
+    var latestTweetDetails = exerciseImplementations.recentActivity(this.tweetStream.stream, scheduler);
 
     this.tweetSubscription.add(tweetsPerMinute.subscribe(function (tpm) {
         self.tpmSpan.innerText = tpm;
@@ -71,7 +74,5 @@ ExerciseRunner.prototype.runTweetStream = function() {
     console.log('Tweet stream started.');
 }
 
-var exercises = new Exercises();
-//var exercises = new ExerciseSolutions();
-var exerciseRunner = new ExerciseRunner(exercises);
+var exerciseRunner = new ExerciseRunner();
 window.onload = exerciseRunner.setupEventHandlers.bind(exerciseRunner);
