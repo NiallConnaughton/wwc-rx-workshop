@@ -4,7 +4,6 @@ function comparer(x, y) {
     return 0;
 }
 
-
 function addSchedulerTime(absolute, relative) {
     return absolute + relative;
 };
@@ -26,32 +25,16 @@ function runTweetStream() {
         split = text.split('\r\n');
 
         startTime = 0;
-        //tweets = split
-        //            .filter(function (line) { return line !== ""; })
-        //            .map(function (json) {
-        //                tweet = JSON.parse(json);
-        //                tweet.timestamp = Date.parse(tweet.CreatedAt);
-
-        //                //if (!startTime)
-        //                //    startTime = tweet.timestamp;
-
-        //                tweet.timeOffset = tweet.timestamp - startTime;
-
-        //                return tweet;
-        //            });
 
         tweets = split
             .filter(function (line) { return line !== ""; })
             .map(function (json) {
                 tweet = JSON.parse(json);
-                tweet.timestamp = Date.parse(tweet.CreatedAt);
+                tweet.timestamp = moment(tweet.CreatedAt);
                 return tweet;
             });
         
         startTime = tweets[0].timestamp;
-        tweets.forEach(function (tweet) {
-            tweet.timeOffset = tweet.timestamp - startTime;
-        });
 
         //tweets.subscribe(function (t) { console.log(t); });
 
@@ -62,21 +45,21 @@ function runTweetStream() {
         scheduler.advanceTo(startTime);
 
         var tweetStream = Rx.Observable.for(tweets, function (t) {
-            return Rx.Observable.timer(new Date(t.timestamp), scheduler)
+            return Rx.Observable.timer(t.timestamp.toDate(), scheduler)
                                 .map(function () { return t; });
         });
 
         tweetSubscription = new Rx.CompositeDisposable();
 
         tweetSubscription.add(tweetStream.subscribe(function (t) {
-            console.log(new Date(t.timestamp) + " - " + t.ScreenName);
+            console.log(t.timestamp.toDate() + " - " + t.ScreenName);
         }));
 
         tweetSubscription.add(
             Rx.Observable.interval(1000)
                          .subscribe(function() {
                                             scheduler.advanceBy(1000 * multiplier);
-                                            nowSpan.innerText = new Date(scheduler.now());
+                                            nowSpan.innerText = moment(scheduler.now()).format('YYYY-MM-DD HH:mm:ss');
                          }));
 
         var tweetsPerMinute = tweetStream.window(Rx.Observable.timer(60000, scheduler))
@@ -87,7 +70,6 @@ function runTweetStream() {
 
         tweetSubscription.add(tweetsPerMinute.subscribe(function (tpm) {
             tpmSpan.innerText = tpm;
-            foo;
         }));
 
         console.log('Tweet stream started.');
