@@ -4,7 +4,7 @@ function ReplayScheduler() {
     this.scheduler.toDateTimeOffset = this.toDateTimeOffset;
     this.scheduler.toRelative = this.toRelative;
     this.timeMultiplier = 1;
-    this.stop = new Rx.CompositeDisposable();
+    this.subscriptions = new Rx.CompositeDisposable();
     this.timeChanged = function () { };
 }
 
@@ -28,9 +28,13 @@ ReplayScheduler.prototype.comparer = function (x, y) {
 
 ReplayScheduler.prototype.start = function () {
     var self = this;
-    this.stop.add(Rx.Observable.interval(1000)
-                  .subscribe(function () {
-                      self.scheduler.advanceBy(1000 * multiplier);
-                      self.timeChanged(self.scheduler.now());
-                  }));
+    this.subscriptions.add(Rx.Observable.interval(1000)
+                      .subscribe(function () {
+                          self.scheduler.advanceBy(1000 * self.timeMultiplier);
+                          self.timeChanged(self.scheduler.now());
+                      }));
+}
+
+ReplayScheduler.prototype.stop = function () {
+    this.subscriptions.dispose();
 }
