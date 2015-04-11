@@ -52,16 +52,16 @@ Exercises.prototype.recentActivity = function (tweetStream, scheduler) {
 
     var dateFormat = 'YYYY-MM-DD HH:mm:ss';
     return tweetStream
-        .sample(5000, scheduler)
-        .map(function (t) {
-            var text = t.Text ? t.Text : '';
-            return t.timestamp.format(dateFormat) + ' ' + t.ScreenName + ' ' + text;
-        });
+                .sample(5000, scheduler)
+                .map(function (t) {
+                    var text = t.Text ? t.Text : '';
+                    return t.timestamp.format(dateFormat) + ' ' + t.ScreenName + ' ' + text;
+                });
 }
 
 Exercises.prototype.tweetsPerMinute = function (tweetStream, scheduler) {
     /*
-        Exercise: Display the number of tweets per minute
+        Exercise 1: Display the number of tweets per minute
 
         Implement a function to use tweetStream to work out how many tweets per minute
         we're seeing. We want the return value to be a stream of the number of tweets
