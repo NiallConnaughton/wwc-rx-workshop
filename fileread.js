@@ -36,8 +36,6 @@ function runTweetStream() {
         
         startTime = tweets[0].timestamp;
 
-        //tweets.subscribe(function (t) { console.log(t); });
-
         var scheduler = new Rx.VirtualTimeScheduler(0, comparer);
         scheduler.add = addSchedulerTime;
         scheduler.toDateTimeOffset = toDateTimeOffset;
@@ -47,7 +45,8 @@ function runTweetStream() {
         var tweetStream = Rx.Observable.for(tweets, function (t) {
             return Rx.Observable.timer(t.timestamp.toDate(), scheduler)
                                 .map(function () { return t; });
-        });
+        })
+        .share();
 
         tweetSubscription = new Rx.CompositeDisposable();
 
@@ -62,7 +61,7 @@ function runTweetStream() {
                                             nowSpan.innerText = moment(scheduler.now()).format('YYYY-MM-DD HH:mm:ss');
                          }));
 
-        var tweetsPerMinute = tweetStream.window(Rx.Observable.timer(60000, scheduler))
+        var tweetsPerMinute = tweetStream.window(Rx.Observable.interval(60000, scheduler))
                    .map(function (minuteTweet) {
                        return minuteTweet.count();
                    })
