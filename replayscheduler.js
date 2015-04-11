@@ -5,7 +5,8 @@ function ReplayScheduler() {
     this.scheduler.toRelative = this.toRelative;
     this.timeMultiplier = 1;
     this.subscriptions = new Rx.CompositeDisposable();
-    this.timeChanged = function () { };
+    this.started = new Rx.Subject();
+    this.now = this.getCurrentTimeStream();
 }
 
 ReplayScheduler.prototype.addSchedulerTime = function (absolute, relative) {
@@ -26,13 +27,21 @@ ReplayScheduler.prototype.comparer = function (x, y) {
     return 0;
 }
 
-ReplayScheduler.prototype.start = function () {
+ReplayScheduler.prototype.getCurrentTimeStream = function () {
+    var refreshInterval = 50;
     var self = this;
-    this.subscriptions.add(Rx.Observable.interval(1000)
-                      .subscribe(function () {
-                          self.scheduler.advanceBy(1000 * self.timeMultiplier);
-                          self.timeChanged(self.scheduler.now());
-                      }));
+    return this.started.map(function () {
+        return Rx.Observable.interval(refreshInterval)
+                 .do(function () {
+                     self.scheduler.advanceBy(refreshInterval * self.timeMultiplier);
+                 })
+                 .map(function () { return self.scheduler.now(); });
+    }).switch();
+}
+
+ReplayScheduler.prototype.start = function (startTime) {
+    this.scheduler.advanceTo(startTime);
+    this.started.onNext(0);
 }
 
 ReplayScheduler.prototype.stop = function () {

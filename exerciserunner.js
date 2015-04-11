@@ -25,6 +25,7 @@ ExerciseRunner.prototype.setupEventHandlers = function() {
     stopButton.onclick = this.stopTweetStream.bind(this);
 
     this.tpmSpan = document.getElementById('tpm');
+    this.latestTweetSpan = document.getElementById('latestTweet');
 }
 
 ExerciseRunner.prototype.createTweetStream = function() {
@@ -47,27 +48,30 @@ ExerciseRunner.prototype.createTweetStream = function() {
 }
 
 ExerciseRunner.prototype.runTweetStream = function() {
-    this.tweetSubscription.add(this.tweetStream.stream.subscribe(function (t) {
-        console.log(t.timestamp.toDate() + " - " + t.ScreenName);
-    }));
-
     var self = this;
-    this.tweetStream.schedulerProvider.timeChanged =
-        function (now) { self.nowSpan.innerText = moment(now).format('YYYY-MM-DD HH:mm:ss'); };
+    this.tweetSubscription.add(
+        this.tweetStream.schedulerProvider.now
+            .subscribe(function (now) { self.nowSpan.innerText = moment(now).format('YYYY-MM-DD HH:mm:ss'); }));
 
     this.multiplierChanged();
     this.tweetStream.start();
 
-    var tweetsPerMinute = this.exerciseImplementations.tweetsPerMinute(this.tweetStream);
+    var scheduler = this.tweetStream.schedulerProvider.scheduler;
+    var tweetsPerMinute = this.exerciseImplementations.tweetsPerMinute(this.tweetStream.stream, scheduler);
+    var latestTweetDetails = this.exerciseImplementations.recentActivity(this.tweetStream.stream, scheduler);
 
     this.tweetSubscription.add(tweetsPerMinute.subscribe(function (tpm) {
         self.tpmSpan.innerText = tpm;
     }));
 
+    this.tweetSubscription.add(latestTweetDetails.subscribe(function (t) {
+        self.latestTweetSpan.innerText = t;
+    }));
+
     console.log('Tweet stream started.');
 }
 
-//var exercises = new Exercises();
-var exercises = new ExerciseSolutions();
+var exercises = new Exercises();
+//var exercises = new ExerciseSolutions();
 var exerciseRunner = new ExerciseRunner(exercises);
 window.onload = exerciseRunner.setupEventHandlers.bind(exerciseRunner);

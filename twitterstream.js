@@ -14,7 +14,7 @@ function TwitterStream(sourceFeedContent) {
                         return tweet;
                     });
 
-    scheduler.advanceTo(tweets[0].timestamp);
+    this.startTime = tweets[0].timestamp;
 
     var combinedTweets = Rx.Observable.for(tweets, function (t) {
         return Rx.Observable.timer(t.timestamp.toDate(), scheduler)
@@ -28,7 +28,7 @@ function TwitterStream(sourceFeedContent) {
 }
 
 TwitterStream.prototype.start = function () {
-    this.schedulerProvider.start();
+    this.schedulerProvider.start(this.startTime);
 }
 
 TwitterStream.prototype.stop = function () {
