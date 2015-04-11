@@ -45,20 +45,24 @@ void Main()
 
 void FilterTweets()
 {
-	var path = @"C:\Dev\CWCTwitter\tweets.20150326.085220.json";
-	var outputPath = @"C:\Dev\CWCTwitter\fulltweets.duringmatch.json";
+	var path = @"C:\Dev\CWCTwitter\fulltweets.duringmatch.json";
+	var outputPath = @"C:\Dev\CWCTwitter\onehour.json";
 	var tweetJsons = FileLines(path);
 
 	var count = 0;
 	
+	var start = new DateTime(2015, 03, 26, 14, 20, 00);
+	var end = start.AddHours(1.5);
 	var tweets = tweetJsons.Select(js => new TweetEvent { Json = js, Tweet = Tweet.TweetFactory.GenerateTweetFromJson(js) })
 						   .Where(te => te.Tweet != null)
 						   .Do(te => {
 						   			if (++count % 10000 == 0)
 										te.Tweet.CreatedAt.Dump();
 									})
-						   .DuringMatchPlay()
-						   .ExcludeNonEnglish()
+						   .SkipWhile(te => te.Tweet.CreatedAt < start)
+						   .TakeWhile(te => te.Tweet.CreatedAt <= end)
+//						   .DuringMatchPlay()
+//						   .ExcludeNonEnglish()
 						   .Select(te => te.Json);
 						   
 	var writer = new StreamWriter(outputPath);
@@ -70,8 +74,8 @@ void FilterTweets()
 
 void SummarizeTweets()
 {
-	var path = @"C:\Dev\CWCTwitter\fulltweets.duringmatch.json";
-	var outputPath = @"C:\Dev\CWCTwitter\fullmatch.notext.sample10.json";
+	var path = @"C:\Dev\CWCTwitter\onehour.json";
+	var outputPath = @"C:\Dev\CWCTwitter\onehour.summarized.json";
 	var tweetJsons = FileLines(path);
 
 	var count = 0;
@@ -85,9 +89,9 @@ void SummarizeTweets()
 						   .Sample(i => i % 10 == 0)
 						   .Select(te => te.Tweet);
 	
-	var summaryFlags = TweetSummaryFlags.Minimal;
-	var summarizedTweets = tweets.Select(t => TimestampTweet(t));
-//	var summarizedTweets = tweets.Select(t => SummarizeTweet(t, summaryFlags));
+	var summaryFlags = TweetSummaryFlags.All ^ TweetSummaryFlags.IncludeRetweetedTweet;
+//	var summarizedTweets = tweets.Select(t => TimestampTweet(t));
+	var summarizedTweets = tweets.Select(t => SummarizeTweet(t, summaryFlags));
 	
 	var serializerSettings = new JsonSerializerSettings {
 															DateFormatHandling = DateFormatHandling.IsoDateFormat,
