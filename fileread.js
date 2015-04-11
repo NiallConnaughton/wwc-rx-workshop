@@ -1,62 +1,66 @@
-function runTweetStream() {
-    var fileInput = document.getElementById('files');
-    var file = fileInput.files[0];
-    var filereader = new FileReader();
-    filereader.onload = function (e) {
-        text = filereader.result;
+//function runTweetStream() {
+//    tweetSubscription.add(tweetStream.stream.subscribe(function (t) {
+//        console.log(t.timestamp.toDate() + " - " + t.ScreenName);
+//    }));
 
-        tweetStream = new TwitterStream(text);
-        tweetSubscription = new Rx.CompositeDisposable();
-        tweetSubscription.add(Rx.Disposable.create(tweetStream.stop.bind(tweetStream)));
+//    tweetStream.schedulerProvider.timeChanged =
+//        function (now) { nowSpan.innerText = moment(now).format('YYYY-MM-DD HH:mm:ss'); };
 
-        tweetSubscription.add(tweetStream.stream.subscribe(function (t) {
-            console.log(t.timestamp.toDate() + " - " + t.ScreenName);
-        }));
+//    multiplierChanged();
+//    tweetStream.start();
 
-        tweetStream.schedulerProvider.timeChanged =
-            function (now) { nowSpan.innerText = moment(now).format('YYYY-MM-DD HH:mm:ss'); };
+//    var tweetsPerMinute = tweetStream.stream
+//                                        .window(Rx.Observable.interval(60000, tweetStream.schedulerProvider.scheduler))
+//                                        .map(function (minuteTweet) { return minuteTweet.count(); })
+//                                        .mergeAll();
 
-        multiplierChanged();
-        tweetStream.start();
+//    tweetSubscription.add(tweetsPerMinute.subscribe(function (tpm) {
+//        tpmSpan.innerText = tpm;
+//    }));
 
-        var tweetsPerMinute = tweetStream.stream
-                                         .window(Rx.Observable.interval(60000, tweetStream.schedulerProvider.scheduler))
-                                         .map(function (minuteTweet) { return minuteTweet.count(); })
-                                         .mergeAll();
+//    console.log('Tweet stream started.');
+//}
 
-        tweetSubscription.add(tweetsPerMinute.subscribe(function (tpm) {
-            tpmSpan.innerText = tpm;
-        }));
+//function createTweetStream() {
+//    var fileInput = document.getElementById('files');
+//    var file = fileInput.files[0];
+//    var filereader = new FileReader();
+//    filereader.onload = function (e) {
+//        text = filereader.result;
 
-        console.log('Tweet stream started.');
-    };
+//        tweetStream = new TwitterStream(text);
+//        tweetSubscription = new Rx.CompositeDisposable();
+//        tweetSubscription.add(Rx.Disposable.create(tweetStream.stop.bind(tweetStream)));
 
-    filereader.readAsText(file);
-}
+//        runTweetStream();
+//    };
 
-function stopTweetStream() {
-    tweetSubscription.dispose();
-    console.log('Tweet stream stopped.');
-}
+//    filereader.readAsText(file);
+//}
 
-function multiplierChanged() {
-    tweetStream.schedulerProvider.timeMultiplier = timeMultiplier.value;
-    multiplierSpan.innerHTML = timeMultiplier.value;
-}
+//function stopTweetStream() {
+//    tweetSubscription.dispose();
+//    console.log('Tweet stream stopped.');
+//}
 
-function setupEventHandlers() {
-    nowSpan = document.getElementById('now');
-    timeMultiplier = document.getElementById('timeMultiplier');
-    multiplierSpan = document.getElementById('multiplierValue');
-    timeMultiplier.onchange = multiplierChanged;
+//function multiplierChanged() {
+//    tweetStream.schedulerProvider.timeMultiplier = timeMultiplier.value;
+//    multiplierSpan.innerHTML = timeMultiplier.value;
+//}
 
-    var goButton = document.getElementById('goButton');
-    goButton.onclick = runTweetStream;
+//function setupEventHandlers() {
+//    nowSpan = document.getElementById('now');
+//    timeMultiplier = document.getElementById('timeMultiplier');
+//    multiplierSpan = document.getElementById('multiplierValue');
+//    timeMultiplier.onchange = multiplierChanged;
 
-    var stopButton = document.getElementById('stopButton');
-    stopButton.onclick = stopTweetStream;
+//    var goButton = document.getElementById('goButton');
+//    goButton.onclick = createTweetStream;
 
-    tpmSpan = document.getElementById('tpm');
-}
+//    var stopButton = document.getElementById('stopButton');
+//    stopButton.onclick = stopTweetStream;
 
-window.onload = setupEventHandlers;
+//    tpmSpan = document.getElementById('tpm');
+//}
+
+//window.onload = setupEventHandlers;
