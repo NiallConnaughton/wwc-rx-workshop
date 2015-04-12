@@ -11,6 +11,7 @@ function TwitterStream(sourceFeedContent) {
                     .map(function (json) {
                         tweet = JSON.parse(json);
                         tweet.timestamp = moment(tweet.createdAt);
+                        tweet.displayTimestamp = tweet.timestamp.format(timestampFormat)
                         return tweet;
                     });
 

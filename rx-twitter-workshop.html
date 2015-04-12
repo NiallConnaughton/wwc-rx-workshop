@@ -8,11 +8,35 @@
     <script src="rx.all.js" type="text/javascript"></script>
     <script src="moment.min.js" type="text/javascript"></script>
     <script src="ractive.js" type="text/javascript"></script>
+
+    <link rel="stylesheet" href="rx-twitter-workshop.css" type="text/css" />
 </head>
 <body>
     <script id="tweetsPerMinuteTemplate" type="text/ractive">
-        <p>Tweets per minute: {{timestamp}} - {{tweetsPerMinute}}</p>
+        <p>Tweets per minute: <span class="timestamp">{{timestamp}}</span> - {{tweetsPerMinute}}</p>
     </script>
+
+    <script id="recentActivityTemplate" type="text/ractive">
+        <h1>Recent Activity</h1>
+        <h3>Current time: </h3>{{currentTime}}
+
+        <h3>Tweets per minute:</h3>
+        {{#if tweetsPerMinute}}
+        <span class="timestamp">{{tweetsPerMinute.timestamp}}</span> - {{tweetsPerMinute.count}}
+        {{/if}}
+
+        <h3>Latest tweet:</h3>
+        {{#if recentTweet}}
+            <div>@{{recentTweet.screenName}} {{recentTweet.displayTimestamp}}</div>
+            <div>{{recentTweet.text}}</div>
+        {{/if}}
+
+    </script>
+
+    <script id="currentTimeTemplate" type="text/ractive">
+        <h3>Current time: </h3> 
+    </script>
+
     <div>
         <input type="file" id="files" />
         <button id="goButton">Go</button>
@@ -24,14 +48,8 @@
         <input type="range" min="1" max="1000" id="timeMultiplier" value="1" />
         <span id="multiplierValue"></span>x
     </div>
-    <div>
-        Now:<span id="now"></span>
-    </div>
-    <div>
-        Recent activity:<span id="latestTweet"></span>
-    </div>
-    <div id="tweetsPerMinuteContainer">
-    </div>
+
+    <div id="recentActivityContainer" class="section"></div>
     <div>
         Interesting tweets:<span id="interestingTweets"></span>
     </div>

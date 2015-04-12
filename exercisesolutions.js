@@ -18,11 +18,11 @@ ExerciseSolutions.prototype.recentActivity = function (tweetStream, scheduler) {
 
     var dateFormat = 'YYYY-MM-DD HH:mm:ss';
     return tweetStream
-        .sample(5000, scheduler)
-        .map(function (t) {
-            var text = t.text ? t.text : '';
-            return t.timestamp.format(dateFormat) + ' ' + t.screenName + ' ' + text;
-        });
+        .sample(5000, scheduler);
+        //.map(function (t) {
+        //    var text = t.text ? t.text : '';
+        //    return t.timestamp.format(dateFormat) + ' ' + t.screenName + ' ' + text;
+        //});
 }
 
 ExerciseSolutions.prototype.tweetsPerMinute = function (tweetStream, scheduler) {
