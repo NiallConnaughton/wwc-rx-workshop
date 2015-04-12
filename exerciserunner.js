@@ -66,9 +66,9 @@ ExerciseRunner.prototype.playPause = function () {
 }
 
 ExerciseRunner.prototype.runTweetStream = function () {
-    var self = this;
+    //var self = this;
     this.tweetSubscription.add(
-        this.tweetStream.schedulerProvider.now.subscribe(this.updateTime.bind(self)));
+        this.tweetStream.schedulerProvider.now.subscribe(this.updateTime.bind(this)));
 
     this.multiplierChanged();
     this.tweetStream.start();
@@ -80,17 +80,16 @@ ExerciseRunner.prototype.runTweetStream = function () {
     var tweetsPerMinute = exerciseImplementations.tweetsPerMinute(this.tweetStream.stream, scheduler);
     var latestTweetDetails = exerciseImplementations.recentActivity(this.tweetStream.stream, scheduler);
     var interestingTweets = exerciseImplementations.interestingTweets(this.tweetStream.stream, scheduler);
+    var trendingHashtags = exerciseImplementations.trending(this.tweetStream.stream, scheduler);
 
-    this.tweetSubscription.add(tweetsPerMinute.subscribe(this.updateTweetsPerMinute.bind(self)));
+    this.tweetSubscription.add(tweetsPerMinute.subscribe(this.updateTweetsPerMinute.bind(this)));
 
-    this.tweetSubscription.add(latestTweetDetails.subscribe(this.updateRecentActivity.bind(self)));
+    this.tweetSubscription.add(latestTweetDetails.subscribe(this.updateRecentActivity.bind(this)));
 
     var lastMinuteInterestingTweets = interestingTweets.bufferWithTime(60000, 5000, scheduler);
-    //var lastMinuteInterestingTweets = interestingTweets.bufferWithCount(5, 1, scheduler).skipLast(5);
-                                                    
+    this.tweetSubscription.add(lastMinuteInterestingTweets.subscribe(this.updateInterestingTweets.bind(this)));
 
-    this.tweetSubscription.add(lastMinuteInterestingTweets.subscribe(this.updateInterestingTweets.bind(self)));
-    //this.tweetSubscription.add(interestingTweets.subscribe(this.updateInterestingTweets.bind(self)));
+    this.tweetSubscription.add(trendingHashtags.subscribe(this.updateTrendingHashtags.bind(this)));
 
     scheduler.advanceBy(60000);
 
@@ -120,6 +119,11 @@ ExerciseRunner.prototype.updateInterestingTweets = function (tweets) {
     this.interestingTweetsRactive.update();
 }
 
+ExerciseRunner.prototype.updateTrendingHashtags = function (hashtags) {
+    this.trendingHashtags.trendingTags = hashtags;
+    this.trendingRactive.update();
+}
+
 ExerciseRunner.prototype.run = function () {
     this.setupEventHandlers();
 
@@ -138,6 +142,15 @@ ExerciseRunner.prototype.run = function () {
             template: '#interestingTweetsTemplate',
             data: this.interestingTweets
         });
+
+    this.trendingHashtags = {};
+    this.trendingRactive = new Ractive(
+        {
+            el: '#trendingContainer',
+            template: '#trendingTemplate',
+            data: this.trendingHashtags
+        });
+
 }
 
 timestampFormat = 'YYYY-MM-DD HH:mm:ss';

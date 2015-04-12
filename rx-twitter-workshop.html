@@ -20,10 +20,7 @@
         <h1>Recent Activity</h1>
         <h3>Current time: </h3>{{currentTime}}
 
-        <h3>Tweets per minute:</h3>
-        {{#if tweetsPerMinute}}
-        <span class="timestamp">{{tweetsPerMinute.timestamp}}</span> - {{tweetsPerMinute.count}}
-        {{/if}}
+        <h3>Tweets per minute:</h3> {{#if tweetsPerMinute}} {{tweetsPerMinute.count}} {{/if}}
 
         <h3>Latest tweet:</h3>
         {{#if recentTweet}}
@@ -48,6 +45,16 @@
         {{/if}}
     </script>
 
+    <script id="trendingTemplate" type="text/ractive">
+        <h1>Trending</h1>
+
+        {{#each trendingTags}}
+        <div>
+            <span>{{hashtag}} {{count}} tweets</span>
+        </div>
+        {{/each}}
+    </script>
+
 
     <div class="section">
         <h1>Source Data</h1>
@@ -66,5 +73,6 @@
 
     <div id="recentActivityContainer" class="section"></div>
     <div id="interestingTweetsContainer" class="section"></div>
+    <div id="trendingContainer" class="section"></div>
 </body>
 </html>

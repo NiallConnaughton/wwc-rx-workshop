@@ -105,3 +105,22 @@ ExerciseSolutions.prototype.interestingTweets = function (tweetStream, scheduler
         })
         .distinct(function (t) { return t.retweetedTweet ? t.retweetedTweet.tweetId : t.tweetId; })
 }
+
+ExerciseSolutions.prototype.trending = function (tweetStream, scheduler) {
+    return tweetStream
+    .flatMap(function (t) {
+        return Rx.Observable.from(t.hashtags);
+    })
+    .bufferWithTime(60000, scheduler)
+    .map(function (minuteHashtags) {
+        return Rx.Observable.from(minuteHashtags)
+            .groupBy(function (ht) {
+                return ht;
+            })
+            .map(function (htCount) {
+                return {
+                    hashtag: htCount.key, count: htCount.count()
+                };
+            });
+    });
+}
