@@ -20,8 +20,8 @@ ExerciseSolutions.prototype.recentActivity = function (tweetStream, scheduler) {
     return tweetStream
         .sample(5000, scheduler)
         .map(function (t) {
-            var text = t.Text ? t.Text : '';
-            return t.timestamp.format(dateFormat) + ' ' + t.ScreenName + ' ' + text;
+            var text = t.text ? t.text : '';
+            return t.timestamp.format(dateFormat) + ' ' + t.screenName + ' ' + text;
         });
 }
 
@@ -50,7 +50,12 @@ ExerciseSolutions.prototype.tweetsPerMinute = function (tweetStream, scheduler) 
 
     var tweetsPerMinuteUsingBuffer =
         tweetStream.bufferWithTime(60000, scheduler)
-                   .map(function (tweetsForMinute) { return tweetsForMinute.length; });
+                   .map(function (tweetsForMinute) {
+                       return {
+                           timestamp: scheduler.now(),
+                           tweetsPerMinute: tweetsForMinute.length
+                       };
+                   });
 
 
 
@@ -63,7 +68,7 @@ ExerciseSolutions.prototype.tweetsPerMinute = function (tweetStream, scheduler) 
         less memory.
 
         The biggest difference between Buffer and Window is:
-            - Buffer gives us the set of all tweets at the end of each minute
+            - Buffer gives us the list of all tweets at the end of each minute
             - Window gives us a new stream of tweets at the start of each minute,
             and each new stream gives the tweets for that minute as they happen.
 
@@ -96,4 +101,8 @@ ExerciseSolutions.prototype.tweetsPerMinute = function (tweetStream, scheduler) 
     // Switch these around to see how they work
     return tweetsPerMinuteUsingBuffer;
     //return tweetsPerMinuteUsingWindow;
+}
+
+ExerciseSolutions.prototype.interestingTweets = function (tweetStream, scheduler) {
+    return Rx.Observable.never();
 }

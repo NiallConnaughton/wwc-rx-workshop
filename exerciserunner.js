@@ -25,6 +25,7 @@ ExerciseRunner.prototype.setupEventHandlers = function() {
 
     this.tpmSpan = document.getElementById('tpm');
     this.latestTweetSpan = document.getElementById('latestTweet');
+    this.interestingTweetSpan = document.getElementById('interestingTweets');
     this.useSampleSolutions = document.getElementById('useSampleSolutions');
 }
 
@@ -55,24 +56,40 @@ ExerciseRunner.prototype.runTweetStream = function() {
 
     this.multiplierChanged();
     this.tweetStream.start();
+    var scheduler = this.tweetStream.schedulerProvider.scheduler;
 
     var useSolution = this.useSampleSolutions.checked;
     var exerciseImplementations = useSolution ? new ExerciseSolutions() : new Exercises();
 
-    var scheduler = this.tweetStream.schedulerProvider.scheduler;
     var tweetsPerMinute = exerciseImplementations.tweetsPerMinute(this.tweetStream.stream, scheduler);
     var latestTweetDetails = exerciseImplementations.recentActivity(this.tweetStream.stream, scheduler);
+    var interestingTweets = exerciseImplementations.interestingTweets(this.tweetStream.stream, scheduler);
 
     this.tweetSubscription.add(tweetsPerMinute.subscribe(function (tpm) {
-        self.tpmSpan.innerText = tpm;
+        self.tpmRactive.set(tpm);
     }));
 
     this.tweetSubscription.add(latestTweetDetails.subscribe(function (t) {
         self.latestTweetSpan.innerText = t;
     }));
 
+    this.tweetSubscription.add(interestingTweets.subscribe(function (t) {
+        self.interestingTweetSpan.innerText = t;
+    }));
+
     console.log('Tweet stream started.');
 }
 
+ExerciseRunner.prototype.run = function () {
+    this.setupEventHandlers();
+
+    this.tpmData = { timestamp: 0, tweetsPerMinute: 0 };
+    this.tpmRactive = new Ractive(
+        {
+            el: '#tweetsPerMinuteContainer',
+            template: '#tweetsPerMinuteTemplate',
+        });
+}
+
 var exerciseRunner = new ExerciseRunner();
-window.onload = exerciseRunner.setupEventHandlers.bind(exerciseRunner);
+window.onload = exerciseRunner.run.bind(exerciseRunner);

@@ -35,25 +35,26 @@
   <Namespace>Tweetinvi.Logic.Model</Namespace>
   <Namespace>Tweetinvi.Logic.TwitterEntities</Namespace>
   <Namespace>Newtonsoft.Json</Namespace>
+  <Namespace>Newtonsoft.Json.Serialization</Namespace>
 </Query>
 
 void Main()
 {
-//	FilterTweets();
 	SummarizeTweets();
 }
 
-void FilterTweets()
+void SummarizeTweets()
 {
-	var path = @"C:\Dev\CWCTwitter\fulltweets.duringmatch.json";
-	var outputPath = @"C:\Dev\CWCTwitter\onehour.json";
+	var path = @"C:\Dev\CWCTwitter\tweets.20150326.085220.json";
+	var outputPath = @"C:\Dev\CWCTwitter\1515.inrt.sz.s10.json";
 	var tweetJsons = FileLines(path);
 
 	var count = 0;
 	
-	var start = new DateTime(2015, 03, 26, 14, 20, 00);
-	var end = start.AddHours(1.5);
-	var tweets = tweetJsons.Select(js => new TweetEvent { Json = js, Tweet = Tweet.TweetFactory.GenerateTweetFromJson(js) })
+	var start = new DateTime(2015, 03, 26, 15, 15, 00);
+	var end = start.AddHours(1.75);
+	var tweets = tweetJsons.Sample(i => i % 10 == 0)
+						   .Select(js => new TweetEvent { Json = js, Tweet = Tweet.TweetFactory.GenerateTweetFromJson(js) })
 						   .Where(te => te.Tweet != null)
 						   .Do(te => {
 						   			if (++count % 10000 == 0)
@@ -62,41 +63,19 @@ void FilterTweets()
 						   .SkipWhile(te => te.Tweet.CreatedAt < start)
 						   .TakeWhile(te => te.Tweet.CreatedAt <= end)
 //						   .DuringMatchPlay()
-//						   .ExcludeNonEnglish()
-						   .Select(te => te.Json);
-						   
-	var writer = new StreamWriter(outputPath);
-	writer.AutoFlush = true;
-	
-	tweets.Finally(() => writer.Dispose())
-		  .ForEach(t => writer.WriteLine(t));
-}
-
-void SummarizeTweets()
-{
-	var path = @"C:\Dev\CWCTwitter\onehour.json";
-	var outputPath = @"C:\Dev\CWCTwitter\onehour.summarized.json";
-	var tweetJsons = FileLines(path);
-
-	var count = 0;
-	
-	var tweets = tweetJsons.Sample(i => i % 10 == 0)
-						   .Select(js => new TweetEvent { Json = js, Tweet = Tweet.TweetFactory.GenerateTweetFromJson(js) })
-						   .Where(te => te.Tweet != null)
-						   .Do(t => {
-						   			if (++count % 10000 == 0)
-										string.Format("{0}: {1}", count, t.Tweet.CreatedAt).Dump();
-									})
+						   .ExcludeNonEnglish()
+//						   .ExcludeRetweets()
 						   .Select(te => te.Tweet);
 	
-	var summaryFlags = TweetSummaryFlags.All ^ TweetSummaryFlags.IncludeRetweetedTweet;
+	var summaryFlags = TweetSummaryFlags.All;// ^ TweetSummaryFlags.IncludeRetweetedTweet;
 //	var summarizedTweets = tweets.Select(t => TimestampTweet(t));
 	var summarizedTweets = tweets.Select(t => SummarizeTweet(t, summaryFlags));
 	
 	var serializerSettings = new JsonSerializerSettings {
 															DateFormatHandling = DateFormatHandling.IsoDateFormat,
 															DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-															NullValueHandling = NullValueHandling.Ignore
+															NullValueHandling = NullValueHandling.Ignore,
+															ContractResolver = new CamelCasePropertyNamesContractResolver(),
 														};
 	var jsonOutput = summarizedTweets.Select(t => JsonConvert.SerializeObject(t, serializerSettings));
 	
@@ -141,8 +120,12 @@ private TweetSummary SummarizeTweet(ITweet t, TweetSummaryFlags flags)
 	if ((flags & TweetSummaryFlags.IncludeMentions) == TweetSummaryFlags.IncludeMentions)
 		summary.Mentions = t.UserMentions.Select(m => m.ScreenName).ToList();
 		
-	if ((flags & TweetSummaryFlags.Minimal) != TweetSummaryFlags.Minimal)
-		summary.Friends = t.Creator.FriendsCount;
+	if (flags != TweetSummaryFlags.Minimal)
+	{
+		summary.Followers = t.Creator.FollowersCount;
+		summary.FavouriteCount = t.FavouriteCount;
+		summary.TweetId = t.Id;
+	}
 		
 	return summary;
 }
@@ -167,7 +150,7 @@ public class TweetTimestamp
 public class TweetSummary
 {
 	public DateTime CreatedAt { get; set; }
-	public int Friends { get; set; }
+	public int Followers { get; set; }
 	public string ScreenName { get; set; }
 	public string Text { get; set; }
 	public bool IsRetweet { get; set; }
@@ -175,6 +158,8 @@ public class TweetSummary
 	public List<string> Mentions { get; set; }
 	public TweetSummary RetweetedTweet { get; set; }
 	public int RetweetCount { get; set; }
+	public int FavouriteCount { get; set; }
+	public long TweetId { get; set; }
 }
 
 public static class TweetStreamEx

@@ -11,14 +11,14 @@ Exercises.prototype.recentActivity = function (tweetStream, scheduler) {
                             up with new streams, like the number of tweets per minute, or
                             current popular hashtags, etc.
 
-              scheduler - Our virtual time scheduler that lets us speed up time. 
-                          The scheduler is important, because it's how we speed up time
-                          so we can see results from our exercises faster.
+              scheduler - Our virtual time scheduler. The scheduler is important, because
+                          it's how we speed up time so we can see results from our exercises
+                          faster.
 
                           You need to use the scheduler for any operators you use that
                           involve timing - like sample, bufferWithTime, window, timer, etc.
-                          Then these operators will move faster when you increase the
-                          speed of the tweet stream.
+                          Then these operators will respond when you increase the speed of
+                          the tweet stream.
 
         Each exercise needs to return a new stream that we can subscribe to and display
         on the screen.
@@ -54,8 +54,8 @@ Exercises.prototype.recentActivity = function (tweetStream, scheduler) {
     return tweetStream
                 .sample(5000, scheduler)
                 .map(function (t) {
-                    var text = t.Text ? t.Text : '';
-                    return t.timestamp.format(dateFormat) + ' ' + t.ScreenName + ' ' + text;
+                    var text = t.text ? t.text : '';
+                    return t.timestamp.format(dateFormat) + ' ' + t.screenName + ' ' + text;
                 });
 }
 
@@ -79,4 +79,22 @@ Exercises.prototype.tweetsPerMinute = function (tweetStream, scheduler) {
     */
 
     return tweetStream; // Your code goes here!
+}
+
+Exercises.prototype.interestingTweets = function (tweetStream, scheduler) {
+    // Pick high retweet count, favourite count, tweets from user with many followers
+
+    var dateFormat = 'YYYY-MM-DD HH:mm:ss';
+
+    return tweetStream.filter(function (t) {
+        return t.followers > 50000;
+        //return t.retweetedTweet && t.retweetedTweet.favouriteCount > 30;
+    })
+    .distinct(function (t) { return t.tweetId; })
+    //.map(function (t) { return t.retweetedTweet; })
+    .map(function (t) {
+        var text = t.text ? t.text : '';
+        return t.timestamp.format(dateFormat) + ' ' + t.screenName + ' ' + text + ' ' + t.followers + ' followers';
+        //return moment(t.createdAt).format(dateFormat) + ' ' + t.screenName + ' ' + text;
+    });
 }

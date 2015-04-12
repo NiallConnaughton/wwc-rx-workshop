@@ -10,7 +10,7 @@ function TwitterStream(sourceFeedContent) {
                     .filter(function (line) { return line !== ""; })
                     .map(function (json) {
                         tweet = JSON.parse(json);
-                        tweet.timestamp = moment(tweet.CreatedAt);
+                        tweet.timestamp = moment(tweet.createdAt);
                         return tweet;
                     });
 
