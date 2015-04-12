@@ -3,12 +3,13 @@ function ExerciseRunner() {
 
 ExerciseRunner.prototype.stopTweetStream = function() {
     this.tweetSubscription.dispose();
+    this.started = false;
     console.log('Tweet stream stopped.');
 }
 
 ExerciseRunner.prototype.multiplierChanged = function() {
-    this.tweetStream.schedulerProvider.timeMultiplier = timeMultiplier.value;
-    this.multiplierSpan.innerHTML = timeMultiplier.value;
+    this.tweetStream.schedulerProvider.timeMultiplier = this.timeMultiplier.value;
+    this.multiplierSpan.innerHTML = this.timeMultiplier.value;
 }
 
 ExerciseRunner.prototype.setupEventHandlers = function() {
@@ -19,7 +20,7 @@ ExerciseRunner.prototype.setupEventHandlers = function() {
     this.timeMultiplier.onchange = this.multiplierChanged.bind(this);
 
     var goButton = document.getElementById('goButton');
-    goButton.onclick = this.createTweetStream.bind(this);
+    goButton.onclick = this.playPause.bind(this);
 
     var stopButton = document.getElementById('stopButton');
     stopButton.onclick = this.stopTweetStream.bind(this);
@@ -44,7 +45,27 @@ ExerciseRunner.prototype.createTweetStream = function() {
     filereader.readAsText(file);
 }
 
-ExerciseRunner.prototype.runTweetStream = function() {
+ExerciseRunner.prototype.playPause = function () {
+    // This is exactly the kind of junk code Rx is better at
+
+    if (!this.started) {
+        this.started = true;
+        this.paused = false;
+        this.createTweetStream();
+    }
+    else {
+        this.paused = !this.paused;
+
+        var currentMultiplier = this.timeMultiplier.value;
+        this.timeMultiplier.value = this.paused ? "0" : this.lastMultiplier;
+        this.lastMultiplier = currentMultiplier;
+        this.multiplierChanged();
+
+        console.log('Tweet stream ' + (this.paused ? "paused" : "resumed"));
+    }
+}
+
+ExerciseRunner.prototype.runTweetStream = function () {
     var self = this;
     this.tweetSubscription.add(
         this.tweetStream.schedulerProvider.now.subscribe(this.updateTime.bind(self)));
@@ -64,10 +85,14 @@ ExerciseRunner.prototype.runTweetStream = function() {
 
     this.tweetSubscription.add(latestTweetDetails.subscribe(this.updateRecentActivity.bind(self)));
 
-    this.tweetSubscription.add(interestingTweets.subscribe(this.updateInterestingTweets.bind(self)));
-    //function (t) {
-    //    self.interestingTweetSpan.innerText = t;
-    //}));
+    var lastMinuteInterestingTweets = interestingTweets.bufferWithTime(60000, 5000, scheduler);
+    //var lastMinuteInterestingTweets = interestingTweets.bufferWithCount(5, 1, scheduler).skipLast(5);
+                                                    
+
+    this.tweetSubscription.add(lastMinuteInterestingTweets.subscribe(this.updateInterestingTweets.bind(self)));
+    //this.tweetSubscription.add(interestingTweets.subscribe(this.updateInterestingTweets.bind(self)));
+
+    scheduler.advanceBy(60000);
 
     console.log('Tweet stream started.');
 }
@@ -90,8 +115,8 @@ ExerciseRunner.prototype.updateTime = function (time) {
     this.recentActivityRactive.update();
 }
 
-ExerciseRunner.prototype.updateInterestingTweets = function (tweet) {
-    this.interestingTweets.tweet = tweet;
+ExerciseRunner.prototype.updateInterestingTweets = function (tweets) {
+    this.interestingTweets.tweets = tweets;
     this.interestingTweetsRactive.update();
 }
 

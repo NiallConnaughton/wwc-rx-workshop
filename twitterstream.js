@@ -8,12 +8,7 @@ function TwitterStream(sourceFeedContent) {
 
     var tweets = tweetJsons
                     .filter(function (line) { return line !== ""; })
-                    .map(function (json) {
-                        tweet = JSON.parse(json);
-                        tweet.timestamp = moment(tweet.createdAt);
-                        tweet.displayTimestamp = tweet.timestamp.format(timestampFormat)
-                        return tweet;
-                    });
+                    .map(this.parseTweet.bind(this))
 
     this.startTime = tweets[0].timestamp;
 
@@ -26,6 +21,21 @@ function TwitterStream(sourceFeedContent) {
                     .takeUntil(this.stopped)
                     .finally(function () { self.schedulerProvider.stop(); })
                     .share();
+}
+
+TwitterStream.prototype.parseTweet = function (json) {
+    tweet = JSON.parse(json);
+
+    this.setTimestamps(tweet);
+    if (tweet.retweetedTweet)
+        this.setTimestamps(tweet.retweetedTweet);
+
+    return tweet;
+}
+
+TwitterStream.prototype.setTimestamps = function (tweet) {
+    tweet.timestamp = moment(tweet.createdAt);
+    tweet.displayTimestamp = tweet.timestamp.format(timestampFormat);
 }
 
 TwitterStream.prototype.start = function () {

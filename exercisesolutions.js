@@ -90,18 +90,18 @@ ExerciseSolutions.prototype.tweetsPerMinute = function (tweetStream, scheduler) 
 }
 
 ExerciseSolutions.prototype.interestingTweets = function (tweetStream, scheduler) {
+    // Pick high retweet count, favourite count, tweets from user with many followers
 
-    var dateFormat = 'YYYY-MM-DD HH:mm:ss';
+    var highFollowerCount = 100000;
+    var highFavouriteCount = 100;
+    var highRetweetCount = 100;
 
-    return tweetStream.filter(function (t) {
-        return t.followers > 50000;
-        //return t.retweetedTweet && t.retweetedTweet.favouriteCount > 30;
-    })
-    .distinct(function (t) { return t.tweetId; })
-    //.map(function (t) { return t.retweetedTweet; })
-    //.map(function (t) {
-    //    var text = t.text ? t.text : '';
-    //    return t.timestamp.format(dateFormat) + ' ' + t.screenName + ' ' + text + ' ' + t.followers + ' followers';
-    //    //return moment(t.createdAt).format(dateFormat) + ' ' + t.screenName + ' ' + text;
-    //});
+    return tweetStream
+        .map(function (t) { return t.retweetedTweet ? t.retweetedTweet : t;})
+        .filter(function (t) {
+            return t.followers > highFollowerCount
+                || t.retweetCount > highRetweetCount
+                || t.favouriteCount > highFavouriteCount;
+        })
+        .distinct(function (t) { return t.retweetedTweet ? t.retweetedTweet.tweetId : t.tweetId; })
 }

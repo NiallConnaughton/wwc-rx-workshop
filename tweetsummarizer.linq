@@ -112,6 +112,12 @@ private TweetSummary SummarizeTweet(ITweet t, TweetSummaryFlags flags)
 		summary.RetweetedTweet = t.RetweetedTweet != null ? SummarizeTweet(t.RetweetedTweet, flags) : null;
 		summary.RetweetCount = t.RetweetCount;
 		summary.IsRetweet = t.IsRetweet;
+		
+		if (t.IsRetweet)
+		{
+			summary.RetweetCount = t.RetweetedTweet.RetweetCount;
+			summary.FavouriteCount = t.RetweetedTweet.FavouriteCount;
+		}
 	}
 
 	if ((flags & TweetSummaryFlags.IncludeHashtags) == TweetSummaryFlags.IncludeHashtags)

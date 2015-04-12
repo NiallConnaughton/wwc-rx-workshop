@@ -35,14 +35,16 @@
     <script id="interestingTweetsTemplate" type="text/ractive">
         <h1>Interesting Tweets</h1>
 
-        {{#if tweet}}
-            <div><span class="twitterHandle">@{{tweet.screenName}}</span> {{tweet.displayTimestamp}}</div>
-            <div>
-                <span>{{tweet.followers}} followers</span>
-                <span>{{tweet.retweetCount}} retweets</span>
-                <span>{{tweet.favouriteCount}} favourites</span>
-            </div>
-            <div>{{tweet.text}}</div>
+        {{#if tweets}}
+            {{#tweets}}
+                <div><span class="twitterHandle">@{{screenName}}</span> {{displayTimestamp}}</div>
+                <div>
+                    <span>{{followers}} followers</span>
+                    <span>{{retweetCount}} retweets</span>
+                    <span>{{favouriteCount}} favourites</span>
+                </div>
+                <div>{{text}}</div>
+            {{/tweets}}
         {{/if}}
     </script>
 
@@ -57,7 +59,7 @@
         </div>
         <div>
             Time multiplier:
-            <input type="range" min="1" max="1000" id="timeMultiplier" value="1" />
+            <input type="range" min="0" max="1000" id="timeMultiplier" value="1" />
             <span id="multiplierValue"></span>x
         </div>
     </div>
