@@ -14,6 +14,8 @@ ExerciseRunner.prototype.multiplierChanged = function() {
 ExerciseRunner.prototype.setupEventHandlers = function() {
     this.timeMultiplier = document.getElementById('timeMultiplier');
     this.multiplierSpan = document.getElementById('multiplierValue');
+    this.useSampleSolutions = document.getElementById('useSampleSolutions');
+
     this.timeMultiplier.onchange = this.multiplierChanged.bind(this);
 
     var goButton = document.getElementById('goButton');
@@ -21,9 +23,6 @@ ExerciseRunner.prototype.setupEventHandlers = function() {
 
     var stopButton = document.getElementById('stopButton');
     stopButton.onclick = this.stopTweetStream.bind(this);
-
-    this.interestingTweetSpan = document.getElementById('interestingTweets');
-    this.useSampleSolutions = document.getElementById('useSampleSolutions');
 }
 
 ExerciseRunner.prototype.createTweetStream = function() {
@@ -61,15 +60,14 @@ ExerciseRunner.prototype.runTweetStream = function() {
     var latestTweetDetails = exerciseImplementations.recentActivity(this.tweetStream.stream, scheduler);
     var interestingTweets = exerciseImplementations.interestingTweets(this.tweetStream.stream, scheduler);
 
-    this.tweetSubscription.add(
-        tweetsPerMinute.subscribe(this.updateTweetsPerMinute.bind(self)));
+    this.tweetSubscription.add(tweetsPerMinute.subscribe(this.updateTweetsPerMinute.bind(self)));
 
-    this.tweetSubscription.add(
-        latestTweetDetails.subscribe(this.updateRecentActivity.bind(self)));
+    this.tweetSubscription.add(latestTweetDetails.subscribe(this.updateRecentActivity.bind(self)));
 
-    this.tweetSubscription.add(interestingTweets.subscribe(function (t) {
-        self.interestingTweetSpan.innerText = t;
-    }));
+    this.tweetSubscription.add(interestingTweets.subscribe(this.updateInterestingTweets.bind(self)));
+    //function (t) {
+    //    self.interestingTweetSpan.innerText = t;
+    //}));
 
     console.log('Tweet stream started.');
 }
@@ -92,6 +90,11 @@ ExerciseRunner.prototype.updateTime = function (time) {
     this.recentActivityRactive.update();
 }
 
+ExerciseRunner.prototype.updateInterestingTweets = function (tweet) {
+    this.interestingTweets.tweet = tweet;
+    this.interestingTweetsRactive.update();
+}
+
 ExerciseRunner.prototype.run = function () {
     this.setupEventHandlers();
 
@@ -101,6 +104,14 @@ ExerciseRunner.prototype.run = function () {
             el: '#recentActivityContainer',
             template: '#recentActivityTemplate',
             data: this.recentActivity
+        });
+
+    this.interestingTweets = {};
+    this.interestingTweetsRactive = new Ractive(
+        {
+            el: '#interestingTweetsContainer',
+            template: '#interestingTweetsTemplate',
+            data: this.interestingTweets
         });
 }
 

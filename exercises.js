@@ -50,13 +50,7 @@ Exercises.prototype.recentActivity = function (tweetStream, scheduler) {
                     - http://tinyurl.com/rxjsdoc/select.md
     */
 
-    var dateFormat = 'YYYY-MM-DD HH:mm:ss';
-    return tweetStream
-                .sample(5000, scheduler)
-                .map(function (t) {
-                    var text = t.text ? t.text : '';
-                    return t.timestamp.format(dateFormat) + ' ' + t.screenName + ' ' + text;
-                });
+    return tweetStream.sample(5000, scheduler)
 }
 
 Exercises.prototype.tweetsPerMinute = function (tweetStream, scheduler) {
@@ -78,23 +72,13 @@ Exercises.prototype.tweetsPerMinute = function (tweetStream, scheduler) {
                             - http://tinyurl.com/rxjsdoc/select.md
     */
 
-    return tweetStream; // Your code goes here!
+    // Your code goes here!
+    return Rx.Observable.never();
 }
 
 Exercises.prototype.interestingTweets = function (tweetStream, scheduler) {
     // Pick high retweet count, favourite count, tweets from user with many followers
 
-    var dateFormat = 'YYYY-MM-DD HH:mm:ss';
-
-    return tweetStream.filter(function (t) {
-        return t.followers > 50000;
-        //return t.retweetedTweet && t.retweetedTweet.favouriteCount > 30;
-    })
-    .distinct(function (t) { return t.tweetId; })
-    //.map(function (t) { return t.retweetedTweet; })
-    .map(function (t) {
-        var text = t.text ? t.text : '';
-        return t.timestamp.format(dateFormat) + ' ' + t.screenName + ' ' + text + ' ' + t.followers + ' followers';
-        //return moment(t.createdAt).format(dateFormat) + ' ' + t.screenName + ' ' + text;
-    });
+    // Your code goes here!
+    return Rx.Observable.never();
 }

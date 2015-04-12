@@ -27,31 +27,42 @@
 
         <h3>Latest tweet:</h3>
         {{#if recentTweet}}
-            <div>@{{recentTweet.screenName}} {{recentTweet.displayTimestamp}}</div>
+            <div><span class="twitterHandle">@{{recentTweet.screenName}}</span> {{recentTweet.displayTimestamp}}</div>
             <div>{{recentTweet.text}}</div>
         {{/if}}
-
     </script>
 
-    <script id="currentTimeTemplate" type="text/ractive">
-        <h3>Current time: </h3> 
+    <script id="interestingTweetsTemplate" type="text/ractive">
+        <h1>Interesting Tweets</h1>
+
+        {{#if tweet}}
+            <div><span class="twitterHandle">@{{tweet.screenName}}</span> {{tweet.displayTimestamp}}</div>
+            <div>
+                <span>{{tweet.followers}} followers</span>
+                <span>{{tweet.retweetCount}} retweets</span>
+                <span>{{tweet.favouriteCount}} favourites</span>
+            </div>
+            <div>{{tweet.text}}</div>
+        {{/if}}
     </script>
 
-    <div>
-        <input type="file" id="files" />
-        <button id="goButton">Go</button>
-        <button id="stopButton">Stop</button>
-        <label><input type="checkbox" id="useSampleSolutions" />Use sample solutions</label>
-    </div>
-    <div>
-        Time multiplier:
-        <input type="range" min="1" max="1000" id="timeMultiplier" value="1" />
-        <span id="multiplierValue"></span>x
+
+    <div class="section">
+        <h1>Source Data</h1>
+        <div>
+            <input type="file" id="files" />
+            <button id="goButton">Go</button>
+            <button id="stopButton">Stop</button>
+            <label><input type="checkbox" id="useSampleSolutions" />Use sample solutions</label>
+        </div>
+        <div>
+            Time multiplier:
+            <input type="range" min="1" max="1000" id="timeMultiplier" value="1" />
+            <span id="multiplierValue"></span>x
+        </div>
     </div>
 
     <div id="recentActivityContainer" class="section"></div>
-    <div>
-        Interesting tweets:<span id="interestingTweets"></span>
-    </div>
+    <div id="interestingTweetsContainer" class="section"></div>
 </body>
 </html>

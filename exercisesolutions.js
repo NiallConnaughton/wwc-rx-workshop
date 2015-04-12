@@ -11,18 +11,9 @@ ExerciseSolutions.prototype.recentActivity = function (tweetStream, scheduler) {
         See:
             sample  - http://reactivex.io/documentation/operators/sample.html
                     - http://tinyurl.com/rxjsdoc/sample.md
-
-            map     - http://reactivex.io/documentation/operators/map.html
-                    - http://tinyurl.com/rxjsdoc/select.md
     */
 
-    var dateFormat = 'YYYY-MM-DD HH:mm:ss';
-    return tweetStream
-        .sample(5000, scheduler);
-        //.map(function (t) {
-        //    var text = t.text ? t.text : '';
-        //    return t.timestamp.format(dateFormat) + ' ' + t.screenName + ' ' + text;
-        //});
+    return tweetStream.sample(5000, scheduler);
 }
 
 ExerciseSolutions.prototype.tweetsPerMinute = function (tweetStream, scheduler) {
@@ -99,5 +90,18 @@ ExerciseSolutions.prototype.tweetsPerMinute = function (tweetStream, scheduler) 
 }
 
 ExerciseSolutions.prototype.interestingTweets = function (tweetStream, scheduler) {
-    return Rx.Observable.never();
+
+    var dateFormat = 'YYYY-MM-DD HH:mm:ss';
+
+    return tweetStream.filter(function (t) {
+        return t.followers > 50000;
+        //return t.retweetedTweet && t.retweetedTweet.favouriteCount > 30;
+    })
+    .distinct(function (t) { return t.tweetId; })
+    //.map(function (t) { return t.retweetedTweet; })
+    //.map(function (t) {
+    //    var text = t.text ? t.text : '';
+    //    return t.timestamp.format(dateFormat) + ' ' + t.screenName + ' ' + text + ' ' + t.followers + ' followers';
+    //    //return moment(t.createdAt).format(dateFormat) + ' ' + t.screenName + ' ' + text;
+    //});
 }
