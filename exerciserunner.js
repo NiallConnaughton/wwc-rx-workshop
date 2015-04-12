@@ -1,4 +1,5 @@
 function ExerciseRunner() {
+    this.timestampFormat = 'YYYY-MM-DD HH:mm:ss';
 }
 
 ExerciseRunner.prototype.stopTweetStream = function() {
@@ -56,7 +57,7 @@ ExerciseRunner.prototype.runTweetStream = function() {
 
     this.multiplierChanged();
     this.tweetStream.start();
-    var scheduler = this.tweetStream.schedulerProvider.scheduler;
+    var scheduler = this.scheduler = this.tweetStream.schedulerProvider.scheduler;
 
     var useSolution = this.useSampleSolutions.checked;
     var exerciseImplementations = useSolution ? new ExerciseSolutions() : new Exercises();
@@ -65,9 +66,8 @@ ExerciseRunner.prototype.runTweetStream = function() {
     var latestTweetDetails = exerciseImplementations.recentActivity(this.tweetStream.stream, scheduler);
     var interestingTweets = exerciseImplementations.interestingTweets(this.tweetStream.stream, scheduler);
 
-    this.tweetSubscription.add(tweetsPerMinute.subscribe(function (tpm) {
-        self.tpmRactive.set(tpm);
-    }));
+    this.tweetSubscription.add(
+        tweetsPerMinute.subscribe(self.updateTweetsPerMinute.bind(self)));
 
     this.tweetSubscription.add(latestTweetDetails.subscribe(function (t) {
         self.latestTweetSpan.innerText = t;
@@ -80,10 +80,17 @@ ExerciseRunner.prototype.runTweetStream = function() {
     console.log('Tweet stream started.');
 }
 
+ExerciseRunner.prototype.updateTweetsPerMinute = function (tpm) {
+    var data = {
+        timestamp: moment(this.scheduler.now()).format(this.timestampFormat),
+        tweetsPerMinute: tpm
+    };
+    this.tpmRactive.set(data);
+}
+
 ExerciseRunner.prototype.run = function () {
     this.setupEventHandlers();
 
-    this.tpmData = { timestamp: 0, tweetsPerMinute: 0 };
     this.tpmRactive = new Ractive(
         {
             el: '#tweetsPerMinuteContainer',

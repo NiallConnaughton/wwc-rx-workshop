@@ -50,12 +50,7 @@ ExerciseSolutions.prototype.tweetsPerMinute = function (tweetStream, scheduler) 
 
     var tweetsPerMinuteUsingBuffer =
         tweetStream.bufferWithTime(60000, scheduler)
-                   .map(function (tweetsForMinute) {
-                       return {
-                           timestamp: scheduler.now(),
-                           tweetsPerMinute: tweetsForMinute.length
-                       };
-                   });
+                   .map(function (tweetsForMinute) { return tweetsForMinute.length; });
 
 
 
