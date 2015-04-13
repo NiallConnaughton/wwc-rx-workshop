@@ -107,20 +107,21 @@ ExerciseSolutions.prototype.interestingTweets = function (tweetStream, scheduler
 }
 
 ExerciseSolutions.prototype.trending = function (tweetStream, scheduler) {
-    return tweetStream
-    .flatMap(function (t) {
-        return Rx.Observable.from(t.hashtags);
-    })
-    .bufferWithTime(60000, scheduler)
-    .map(function (minuteHashtags) {
-        return Rx.Observable.from(minuteHashtags)
-            .groupBy(function (ht) {
-                return ht;
-            })
-            .map(function (htCount) {
-                return {
-                    hashtag: htCount.key, count: htCount.count()
-                };
-            });
-    });
+    return tweetStream.windowWithTime(60000, scheduler)
+                    .flatMap(function (window) { 
+                        return window.flatMap(function (t) {
+                            return Rx.Observable.from(t.hashtags);
+                        })
+                                     .groupBy(function (ht) {
+                                         return ht;
+                                     })
+                                     .flatMap(function (hashtagTweets) {
+                                         return hashtagTweets.count();
+                                     },
+                                              function (hashtagTweets, count) {
+                                                  return { hashtag: hashtagTweets.key, count: count };
+                                              })
+                            .filter(function (ht) { return ht.count > 5; })
+                        .toArray();
+                    });
 }
