@@ -3,7 +3,7 @@ function TwitterStream(sourceFeedContent) {
     this.stopped = new Rx.Subject();
 
     var scheduler = this.schedulerProvider.scheduler;
-    var tweetJsons = sourceFeedContent.split('\r\n');
+    var tweetJsons = sourceFeedContent.split('\n');
     var self = this;
 
     var tweets = tweetJsons
