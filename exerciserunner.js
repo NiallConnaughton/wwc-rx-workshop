@@ -80,7 +80,7 @@ ExerciseRunner.prototype.runTweetStream = function () {
     var tweetsPerMinute = exerciseImplementations.tweetsPerMinute(this.tweetStream.stream, scheduler);
     var latestTweetDetails = exerciseImplementations.recentActivity(this.tweetStream.stream, scheduler);
     var interestingTweets = exerciseImplementations.interestingTweets(this.tweetStream.stream, scheduler);
-    var trendingHashtags = exerciseImplementations.trending(this.tweetStream.stream, scheduler);
+     var trendingHashtags = exerciseImplementations.trending(this.tweetStream.stream, scheduler);
 
     this.tweetSubscription.add(tweetsPerMinute.subscribe(this.updateTweetsPerMinute.bind(this)));
 

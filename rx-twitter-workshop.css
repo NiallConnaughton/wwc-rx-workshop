@@ -1,5 +1,7 @@
 body {
 	background-color: #90B0B0;
+
+	font-family: Roboto;
 }
 
 .timestamp {
@@ -8,7 +10,7 @@ body {
 
 .section {
 	border: 1px solid grey;
-	border-radius: 10px;
+	/*border-radius: 10px;*/
 	padding: 5px;
 	background-color: snow;
 }
