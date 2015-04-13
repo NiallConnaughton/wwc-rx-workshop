@@ -1,16 +1,7 @@
 <html>
 <head>
-    <script src="replayscheduler.js" type="text/javascript"></script>
-    <script src="twitterstream.js" type="text/javascript"></script>
-    <script src="exercises.js" type="text/javascript"></script>
-    <script src="exercisesolutions.js" type="text/javascript"></script>
-    <script src="exerciserunner.js" type="text/javascript"></script>
-    <script src="rx.all.js" type="text/javascript"></script>
-    <script src="moment.min.js" type="text/javascript"></script>
-    <script src="ractive.js" type="text/javascript"></script>
-
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="rx-twitter-workshop.css" type="text/css" />
+    <link rel="stylesheet" href="twitter-dashboard.css" type="text/css" />
 </head>
 <body>
     <script id="tweetsPerMinuteTemplate" type="text/ractive">
@@ -46,17 +37,6 @@
         {{/if}}
     </script>
 
-    <script id="trendingTemplate" type="text/ractive">
-        <h1>Trending</h1>
-
-        {{#each trendingTags}}
-        <div>
-            <span>{{hashtag}} {{count}} tweets</span>
-        </div>
-        {{/each}}
-    </script>
-
-
     <div class="section">
         <h1>Source Data</h1>
         <div>
@@ -74,6 +54,15 @@
 
     <div id="recentActivityContainer" class="section"></div>
     <div id="interestingTweetsContainer" class="section"></div>
-    <div id="trendingContainer" class="section"></div>
+
+    <script src="twitter_framework\replayscheduler.js" type="text/javascript"></script>
+    <script src="twitter_framework\twitterstream.js" type="text/javascript"></script>
+    <script src="twitter_framework\exerciserunner.js" type="text/javascript"></script>
+    <script src="twitter_framework\rx.all.js" type="text/javascript"></script>
+    <script src="twitter_framework\moment.min.js" type="text/javascript"></script>
+    <script src="twitter_framework\ractive.js" type="text/javascript"></script>
+
+    <script src="twitter_exercises.js" type="text/javascript"></script>
+    <script src="twitter_exercise_solutions\twittersolutions.js" type="text/javascript"></script>
 </body>
 </html>

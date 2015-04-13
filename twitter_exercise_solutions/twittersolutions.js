@@ -1,5 +1,4 @@
 function ExerciseSolutions() {
-    // For explanations of each exercise, see exercises.js
 }
 
 ExerciseSolutions.prototype.recentActivity = function (tweetStream, scheduler) {
@@ -104,24 +103,4 @@ ExerciseSolutions.prototype.interestingTweets = function (tweetStream, scheduler
                 || t.favouriteCount > highFavouriteCount;
         })
         .distinct(function (t) { return t.retweetedTweet ? t.retweetedTweet.tweetId : t.tweetId; })
-}
-
-ExerciseSolutions.prototype.trending = function (tweetStream, scheduler) {
-    return tweetStream.windowWithTime(60000, scheduler)
-                    .flatMap(function (window) { 
-                        return window.flatMap(function (t) {
-                            return Rx.Observable.from(t.hashtags);
-                        })
-                                     .groupBy(function (ht) {
-                                         return ht;
-                                     })
-                                     .flatMap(function (hashtagTweets) {
-                                         return hashtagTweets.count();
-                                     },
-                                              function (hashtagTweets, count) {
-                                                  return { hashtag: hashtagTweets.key, count: count };
-                                              })
-                            .filter(function (ht) { return ht.count > 5; })
-                        .toArray();
-                    });
 }
