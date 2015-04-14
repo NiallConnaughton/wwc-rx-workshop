@@ -8,8 +8,7 @@ body {
 }
 
 .section {
-	border: 1px solid grey;
-	/*border-radius: 10px;*/
+	border: 1px solid #777777;
 	padding: 5px;
   margin-top: 5px;
 	background-color: #ffffff;
