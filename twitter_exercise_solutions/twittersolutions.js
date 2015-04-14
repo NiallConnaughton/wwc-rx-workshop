@@ -3,8 +3,7 @@ function ExerciseSolutions() {
 
 ExerciseSolutions.prototype.exercise1_tweetEvery10Seconds = function (tweetStream, scheduler) {
     /*
-        Implementation:
-            - Sample a tweet every 10 seconds
+        Sample a tweet every 10 seconds
 
         See:
             sample  - http://tinyurl.com/rxjsdoc/sample.md
@@ -83,18 +82,36 @@ ExerciseSolutions.prototype.exercise2_numberOfTweetsPerMinute = function (tweetS
 }
 
 ExerciseSolutions.prototype.exercise3_findInterestingTweets = function (tweetStream, scheduler) {
-    // Pick high retweet count, favourite count, tweets from user with many followers
+    /*
+        Use filter to pick out tweets from people with many followers, or tweets with
+        many retweets or favourites.
+
+        We also use:
+            - map to pick out the original tweet from a retweet
+            - distinct to prevent us from showing the same retweeted tweet many times
+              by giving the distinct operator the unique id of each tweet.
+
+        See:
+            filter          - http://tinyurl.com/rxjsdoc/where.md
+                            - http://reactivex.io/documentation/operators/filter.html
+
+            map             - http://tinyurl.com/rxjsdoc/select.md
+                            - http://reactivex.io/documentation/operators/map.html
+
+            distinct        - http://tinyurl.com/rxjsdoc/distinct.md
+                            - http://reactivex.io/documentation/operators/distinct.html
+    */
 
     var highFollowerCount = 100000;
     var highFavouriteCount = 100;
     var highRetweetCount = 100;
 
     return tweetStream
-        .map(function (t) { return t.retweetedTweet ? t.retweetedTweet : t;})
+        .map(function (t) { return t.retweetedTweet ? t.retweetedTweet : t; })
         .filter(function (t) {
             return t.followers > highFollowerCount
                 || t.retweetCount > highRetweetCount
                 || t.favouriteCount > highFavouriteCount;
         })
-        .distinct(function (t) { return t.retweetedTweet ? t.retweetedTweet.tweetId : t.tweetId; })
+        .distinct(function (t) { return t.tweetId; })
 }
