@@ -18,7 +18,7 @@ function exercise1_subscribe() {
 function exercise2_map() {
 	// The map operator is used to transform each value in a source sequence to a new value
 	// Using map looks like this:
-	//     numbers.map(function (number) { return someOtherValue; })
+	//     .map(function (number) { return someOtherValue; })
 
 	// Let's add one to each number in the stream using map
 	var numbers = Rx.Observable.interval(1000).take(10);
@@ -37,7 +37,7 @@ function exercise3_mapSquareNumbers() {
 function exercise4_filterGreaterThan3() {
 	// The filter operator lets you filter out values in a stream.
 	// Using filter looks like this:
-	//     numbers.filter(function (number) { return <evaluate some condition on number>; })
+	//     .filter(function (number) { return <evaluate some condition on number>; })
 	
 	// Note = the filter condition defines what to include - only elements where the filter is true will be
 	// included in the result.
@@ -62,7 +62,7 @@ function exercise6_sample() {
 	// that is ticking faster than we want?
 
 	// Using sample looks like this:
-	//		numbers.sample(<number of milliseconds>)
+	//		.sample(<number of milliseconds>)
 
 	// This stream is ticking 10 times a second. Let's use the sample operator to take a sample
 	// every second.
@@ -90,7 +90,7 @@ function exercise8_bufferWithTime() {
 	// of time, or a chunk of a certain number, or even both.
 
 	// Let's look at bufferWithTime first. Using bufferWithTime looks like this:
-	// 		numbers.bufferWithTime(<number of milliseconds>)
+	// 		.bufferWithTime(<number of milliseconds>)
 
 	// Let's use bufferWithTime to divide up the stream into 3 second blocks
 
@@ -119,11 +119,11 @@ function exercise10_objectsAsValues() {
 	var orders =
 				[
 					{ customer: 'Joe', cost: 500, description: 'Fancy shoes' },
-					{ customer: 'Jane', cost: 2000, description: 'Macbook Air' },
+					{ customer: 'Jane', cost: 2000, description: 'Macbook Pro' },
 					{ customer: 'Bob', cost: 50, description: 'Phone charger' },
 					{ customer: 'Sam', cost: 230, description: 'Office chair' },
 					{ customer: 'Chris', cost: 75, description: 'Kettle' },
-					{ customer: 'Sally', cost: 5000, description: 'Photocopier' }
+					{ customer: 'Sally', cost: 5000, description: 'Digital Camera' }
 				];
 
 	var orderStream = Rx.Observable.interval(1000).take(orders.length)
