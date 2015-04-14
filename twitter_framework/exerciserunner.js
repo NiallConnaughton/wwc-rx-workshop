@@ -55,29 +55,38 @@ ExerciseRunner.prototype.startStop = function () {
 }
 
 ExerciseRunner.prototype.runTweetStream = function () {
-    this.tweetSubscription.add(this.tweetStream.schedulerProvider.now.subscribe(this.updateTime.bind(this)));
+    var currentTime = this.tweetStream.schedulerProvider.now;
+    this.tweetSubscription.add(currentTime.subscribe(this.updateTime.bind(this)));
 
     this.multiplierChanged();
     this.tweetStream.start();
     var scheduler = this.scheduler = this.tweetStream.schedulerProvider.scheduler;
 
-    var useSolution = this.exerciseSource.selectedIndex === 1;
-    var exerciseImplementations = useSolution ? new ExerciseSolutions() : new Exercises();
+    var useSampleSolutions = this.exerciseSource.selectedIndex === 1;
+    var exerciseImplementations = useSampleSolutions ? new ExerciseSolutions() : new Exercises();
 
+    this.tweetSubscription.add(this.tweetStream.stream.subscribe(this.showLatestUpdate.bind(this)));
+
+    // Here we go and get all the exercises and subscribe to them so we can display their output
     var tweetsPerMinute = exerciseImplementations.tweetsPerMinute(this.tweetStream.stream, scheduler);
     var latestTweetDetails = exerciseImplementations.recentActivity(this.tweetStream.stream, scheduler);
     var interestingTweets = exerciseImplementations.interestingTweets(this.tweetStream.stream, scheduler);
-
-    this.tweetSubscription.add(tweetsPerMinute.subscribe(this.updateTweetsPerMinute.bind(this)));
-
-    this.tweetSubscription.add(latestTweetDetails.subscribe(this.updateRecentActivity.bind(this)));
-
     var lastMinuteInterestingTweets = interestingTweets.bufferWithTime(60000, 5000, scheduler);
+
+    // Keep all the subscriptions so we can stop them when the Stop button is pushed
+    this.tweetSubscription.add(tweetsPerMinute.subscribe(this.updateTweetsPerMinute.bind(this)));
+    this.tweetSubscription.add(latestTweetDetails.subscribe(this.updateRecentActivity.bind(this)));
     this.tweetSubscription.add(lastMinuteInterestingTweets.subscribe(this.updateInterestingTweets.bind(this)));
 
+    // Start off the examples that need a minute's data by jumping forward one minute, so we don't have to wait
     scheduler.advanceBy(60000);
 
     console.log('Tweet stream started.');
+}
+
+ExerciseRunner.prototype.showLatestUpdate = function (tweet) {
+    this.latestUpdate.tweet = tweet;
+    this.latestUpdateRactive.update();
 }
 
 ExerciseRunner.prototype.updateTweetsPerMinute = function (tpm) {
@@ -94,8 +103,8 @@ ExerciseRunner.prototype.updateRecentActivity = function (tweet) {
 }
 
 ExerciseRunner.prototype.updateTime = function (time) {
-    this.recentActivity.currentTime = moment(time).format(timestampFormat);
-    this.recentActivityRactive.update();
+    this.latestUpdate.currentTime = moment(time).format(timestampFormat);
+    this.latestUpdateRactive.update();
 }
 
 ExerciseRunner.prototype.updateInterestingTweets = function (tweets) {
@@ -105,6 +114,14 @@ ExerciseRunner.prototype.updateInterestingTweets = function (tweets) {
 
 ExerciseRunner.prototype.run = function () {
     this.setupEventHandlers();
+
+    this.latestUpdate = { };
+    this.latestUpdateRactive = new Ractive(
+    {
+        el: '#latestUpdateContainer',
+        template: '#latestUpdateTemplate',
+        data: this.latestUpdate
+    });
 
     this.recentActivity = { };
     this.recentActivityRactive = new Ractive(
