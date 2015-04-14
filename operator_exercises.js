@@ -193,6 +193,6 @@ function run(number) {
 	name = name.substr('function '.length);
 	name = name.substr(0, name.indexOf('('));
 
-	console.log('Running ' + name);
 	exercise();
+	return 'Running ' + name;
 }

@@ -124,7 +124,7 @@ ExerciseRunner.prototype.run = function () {
     });
 
     this.exerciseViewModel = { };
-    this.recentActivityRactive = new Ractive(
+    this.exercisesRactive = new Ractive(
         {
             el: '#exercisesContainer',
             template: '#exercisesTemplate',
