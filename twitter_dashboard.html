@@ -4,102 +4,108 @@
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
     <link rel="stylesheet" href="bootstrap/bootstrap.min.css">
-    <link rel="stylesheet" href="bootstrap/bootstrap-theme.min.css">
-    <!-- <link rel="stylesheet" href="twitter_dashboard.css" type="text/css" /> -->
+    <!-- <link rel="stylesheet" href="bootstrap/bootstrap-theme.min.css"> -->
+    <link rel="stylesheet" href="twitter_dashboard.css" type="text/css" />
 </head>
 <body>
-    <div class="container-fluid">
-    <script id="tweetsPerMinuteTemplate" type="text/ractive">
-        <p>Tweets per minute: <span class="timestamp">{{timestamp}}</span> - {{tweetsPerMinute}}</p>
-    </script>
+    <div class="container">
+        <script id="tweetsPerMinuteTemplate" type="text/ractive">
+            <p>Tweets per minute: <span class="timestamp">{{timestamp}}</span> - {{tweetsPerMinute}}</p>
+        </script>
 
-    <script id="latestUpdateTemplate" type="text/ractive">
-        <h2>Latest Update</h2>
-        <p>
-            The latest tweet from the stream
-        </p>
-        <!-- <h3>Current time: </h3>{{currentTime}} -->
-        {{#if tweet}}
-            <div><span class="twitterHandle">@{{tweet.screenName}}</span> {{tweet.displayTimestamp}}</div>
-            <div>{{tweet.text}}</div>
-        {{/if}}
-    </script>
-
-    <script id="exercisesTemplate" type="text/ractive">
-        <div class='section'>
-        <h3>Exercise 1</h3>
-        Slowing things down a bit
-
-        <p>
-            The tweets arrive so quickly, we can't read them! Let's take a tweet from the stream every ten seconds instead.
-            We saw an operator from the previous exercises that could help here.
-        </p>
-
-        <h3>Latest tweet:</h3>
-        {{#if recentTweet}}
-            <div><span class="twitterHandle">@{{recentTweet.screenName}}</span> {{recentTweet.displayTimestamp}}</div>
-            <div>{{recentTweet.text}}</div>
-        {{/if}}
-
-        </div>
-
-        <div class='section'>
-            <h3>Exercise 2</h3>
-            How much Twitter activity are we seeing?
-
-            <p>
-                Let's get a count of the number of tweets per minute.
+        <script id="latestUpdateTemplate" type="text/ractive">
+            <h2>Latest Update</h2>
+            <p  class="bg-warning">
+                The latest tweet from the stream
             </p>
-            <h3>Tweets per minute:</h3> {{#if tweetsPerMinute}} {{tweetsPerMinute.count}} {{/if}}
+            <!-- <h3>Current time: </h3>{{currentTime}} -->
+            {{#if tweet}}
+                <div><span class="twitterHandle">@{{tweet.screenName}}</span> {{tweet.displayTimestamp}}</div>
+                <div>{{tweet.text}}</div>
+            {{/if}}
+        </script>
+
+
+        <script id="exercisesTemplate" type="text/ractive">
+            <div class="panel panel-default">
+                <h3>Exercise 1</h3>
+                Slowing things down a bit
+
+                <p>
+                    The tweets arrive so quickly, we can't read them! Let's take a tweet from the stream every ten seconds instead.
+                    We saw an operator from the previous exercises that could help here.
+                </p>
+
+                <h3>Latest tweet:</h3>
+                {{#if recentTweet}}
+                    <div><span class="twitterHandle">@{{recentTweet.screenName}}</span> {{recentTweet.displayTimestamp}}</div>
+                    <div>{{recentTweet.text}}</div>
+                {{/if}}
+
+            </div>
+
+            <div class="panel panel-default">
+                <h3>Exercise 2</h3>
+                How much Twitter activity are we seeing?
+
+                <p>
+                    Let's get a count of the number of tweets per minute.
+                </p>
+                <h3>Tweets per minute:</h3> {{#if tweetsPerMinute}} {{tweetsPerMinute.count}} {{/if}}
+            </div>
+
+            <div class="panel panel-default">
+
+            <h2>Interesting Tweets</h2>
+
+            {{#if tweets}}
+                {{#tweets}}
+                    <div><span class="twitterHandle">@{{screenName}}</span> {{displayTimestamp}}</div>
+                    <div>
+                        <span>{{followers}} followers</span>
+                        <span>{{retweetCount}} retweets</span>
+                        <span>{{favouriteCount}} favourites</span>
+                    </div>
+                    <div>{{text}}</div>
+                {{/tweets}}
+            {{/if}}
+
+            </div>
+        </script>
+
+        <div class="jumbotron">
+                <h2>Twitter dashboard exercises</h2>
+                <p>
+                    This is a dashboard for displaying real-time information from a stream of tweets. The source data
+                    is a recording of tweets during the recent Australia vs India World Cup semi final - to give us
+                    a topic we can expect lots of tweets on.
+                </p>
         </div>
 
-        <div class='section'>
-
-        <h2>Interesting Tweets</h2>
-
-        {{#if tweets}}
-            {{#tweets}}
-                <div><span class="twitterHandle">@{{screenName}}</span> {{displayTimestamp}}</div>
-                <div>
-                    <span>{{followers}} followers</span>
-                    <span>{{retweetCount}} retweets</span>
-                    <span>{{favouriteCount}} favourites</span>
-                </div>
-                <div>{{text}}</div>
-            {{/tweets}}
-        {{/if}}
-
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2>Setup</h2>
         </div>
-    </script>
+        <div class="panel-body">
+            <p>
+                We need to give the dashboard the source data - that's the twitter_data/Aus-vs-India-tweets.json file.
+                Also, you can choose between running your code or the sample solutions, so you can compare the results.
+            </p>
+            <div>Source data
+                <input type="file" id="files"/>
+            </div>
+            <div>
+                Which exercise solutions?
+                <select id="exerciseSource">
+                    <option value="exercises">Run my solutions</option>
+                    <option value="solutions">Run sample solutions</option>
+                </select>
 
-    <h1>Twitter dashboard exercises</h1>
-    <p>
-        This is a dashboard for displaying real-time information from a stream of tweets. The source data
-        is a recording of tweets during the recent Australia vs India World Cup semi final - to give us
-        a topic we can expect lots of tweets on.
-    </p>
-
-
-    <div class="section">
-        <h2>Setup</h2>
-        <p>
-            We need to give the dashboard the source data - that's the twitter_data/Aus-vs-India-tweets.json file.
-            Also, you can choose between running your code or the sample solutions, so you can compare the results.
-        </p>
-        <div>Source data
-            <input type="file" id="files"/>
-        </div>
-        <div>
-            Which exercise solutions?
-            <select id="exerciseSource">
-                <option value="exercises">Run my solutions</option>
-                <option value="solutions">Run sample solutions</option>
-            </select>
-
+            </div>
         </div>
     </div>
 
-    <div class='section'>
+    <div class="panel">
         <h2>Streaming Tweets</h2>
         <p>
             Hit Start to begin the tweet stream. You can control the speed of the stream with the slider.
@@ -107,7 +113,7 @@
         </p>
 
         <div>
-            <button class="button" id="startStopButton">Start</button>
+            <button class="btn btn-default" id="startStopButton">Start</button>
             Speed:
             <input type="range" min="0" max="100" id="timeMultiplier" value="1" />
             <span id="multiplierValue">1</span>x
