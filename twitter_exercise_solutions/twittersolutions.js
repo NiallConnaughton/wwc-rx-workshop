@@ -1,21 +1,20 @@
 function ExerciseSolutions() {
 }
 
-ExerciseSolutions.prototype.recentActivity = function (tweetStream, scheduler) {
+ExerciseSolutions.prototype.exercise1_tweetEvery10Seconds = function (tweetStream, scheduler) {
     /*
         Implementation:
-            - Sample a tweet every 5 seconds
-            - Take each sampled tweet and map to some information to display
+            - Sample a tweet every 10 seconds
 
         See:
-            sample  - http://reactivex.io/documentation/operators/sample.html
-                    - http://tinyurl.com/rxjsdoc/sample.md
+            sample  - http://tinyurl.com/rxjsdoc/sample.md
+                    - http://reactivex.io/documentation/operators/sample.html
     */
 
-    return tweetStream.sample(5000, scheduler);
+    return tweetStream.sample(10000, scheduler);
 }
 
-ExerciseSolutions.prototype.tweetsPerMinute = function (tweetStream, scheduler) {
+ExerciseSolutions.prototype.exercise2_numberOfTweetsPerMinute = function (tweetStream, scheduler) {
     /*
         There are (at least) a couple of ways of doing this.
         
@@ -31,11 +30,11 @@ ExerciseSolutions.prototype.tweetsPerMinute = function (tweetStream, scheduler) 
         count, we don't actually use the tweets in the buffer.
 
         See:
-            bufferWithTime  - http://reactivex.io/documentation/operators/buffer.html
-                            - http://tinyurl.com/rxjsdoc/bufferwithtime.md
+            bufferWithTime  - http://tinyurl.com/rxjsdoc/bufferwithtime.md
+                            - http://reactivex.io/documentation/operators/buffer.html
 
-            map             - http://reactivex.io/documentation/operators/map.html
-                            - http://tinyurl.com/rxjsdoc/select.md
+            map             - http://tinyurl.com/rxjsdoc/select.md
+                            - http://reactivex.io/documentation/operators/map.html
     */
 
     var tweetsPerMinuteUsingBuffer =
@@ -57,38 +56,33 @@ ExerciseSolutions.prototype.tweetsPerMinute = function (tweetStream, scheduler) 
             - Window gives us a new stream of tweets at the start of each minute,
             and each new stream gives the tweets for that minute as they happen.
 
-        This means that Window creates a stream of 1 minute streams. So after we
-        take the count of each 1 minute stream, we have to merge all these together
-        back into a single stream.
-
+        This means that Window creates a stream of streams. We want to flatten that
+        back to a single stream that contains values for the count of tweets in each
+        minute. This is where flatMap comes in.
 
         See:
-            windowWithTime  - http://reactivex.io/documentation/operators/window.html
-                            - http://tinyurl.com/rxjsdoc/windowwithtime.md
+            windowWithTime  - http://tinyurl.com/rxjsdoc/windowwithtime.md
+                            - http://reactivex.io/documentation/operators/window.html
 
-            map             - http://reactivex.io/documentation/operators/map.html
-                            - http://tinyurl.com/rxjsdoc/select.md
+            flatMap         - http://tinyurl.com/rxjsdoc/select.md
+                            - http://reactivex.io/documentation/operators/map.html
 
-            count           - http://reactivex.io/documentation/operators/count.html
-                            - http://tinyurl.com/rxjsdoc/count.md
-
-            mergeAll        - http://reactivex.io/documentation/operators/merge.html
-                            - http://tinyurl.com/rxjsdoc/mergeall.md
+            count           - http://tinyurl.com/rxjsdoc/count.md
+                            - http://reactivex.io/documentation/operators/count.html
     */
 
 
     var tweetsPerMinuteUsingWindow =
             tweetStream.windowWithTime(60000, scheduler)
-                       .map(function (tweetsForMinute) { return tweetsForMinute.count(); })
-                       .mergeAll();
+                       .flatMap(function (tweetsForMinute) { return tweetsForMinute.count(); });
 
 
     // Switch these around to see how they work
     return tweetsPerMinuteUsingBuffer;
-    //return tweetsPerMinuteUsingWindow;
+    // return tweetsPerMinuteUsingWindow;
 }
 
-ExerciseSolutions.prototype.interestingTweets = function (tweetStream, scheduler) {
+ExerciseSolutions.prototype.exercise3_findInterestingTweets = function (tweetStream, scheduler) {
     // Pick high retweet count, favourite count, tweets from user with many followers
 
     var highFollowerCount = 100000;
