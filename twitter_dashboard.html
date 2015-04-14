@@ -20,18 +20,38 @@
         {{/if}}
     </script>
 
-    <script id="recentActivityTemplate" type="text/ractive">
+    <script id="exercisesTemplate" type="text/ractive">
+        <div class='section'>
+        <h3>Exercise 1</h3>
+        Slowing things down a bit
 
-        <h3>Tweets per minute:</h3> {{#if tweetsPerMinute}} {{tweetsPerMinute.count}} {{/if}}
+        <p>
+            The tweets arrive so quickly, we can't read them! Let's take a tweet from the stream every ten seconds instead.
+            We saw an operator from the previous exercises that could help here.
+        </p>
 
         <h3>Latest tweet:</h3>
         {{#if recentTweet}}
             <div><span class="twitterHandle">@{{recentTweet.screenName}}</span> {{recentTweet.displayTimestamp}}</div>
             <div>{{recentTweet.text}}</div>
         {{/if}}
-    </script>
 
-    <script id="interestingTweetsTemplate" type="text/ractive">
+        </div>
+
+        <div class='section'>
+            <h3>Exercise 2</h3>
+            How much Twitter activity are we seeing?
+
+            <p>
+                In Exercise 1, we cut the speed of tweets down so we can see them more easily. How much twitter activity
+                are we getting? Let's get a count of the number of tweets per minute.
+                Time to put the buffer operator to use! We'll also have to convert those buffers into a count of tweets somehow.
+            </p>
+            <h3>Tweets per minute:</h3> {{#if tweetsPerMinute}} {{tweetsPerMinute.count}} {{/if}}
+        </div>
+
+        <div class='section'>
+
         <h2>Interesting Tweets</h2>
 
         {{#if tweets}}
@@ -45,6 +65,8 @@
                 <div>{{text}}</div>
             {{/tweets}}
         {{/if}}
+
+        </div>
     </script>
 
     <h1>Twitter dashboard exercises</h1>
@@ -90,8 +112,7 @@
     </div>
 
     <div id="latestUpdateContainer" class="section"></div>
-    <div id="recentActivityContainer" class="section"></div>
-    <div id="interestingTweetsContainer" class="section"></div>
+    <div id="exercisesContainer" class="section"></div>
 
     <script src="twitter_framework\replayscheduler.js" type="text/javascript"></script>
     <script src="twitter_framework\twitterstream.js" type="text/javascript"></script>
