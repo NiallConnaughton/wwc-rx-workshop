@@ -9,7 +9,7 @@
     </script>
 
     <script id="recentActivityTemplate" type="text/ractive">
-        <h1>Recent Activity</h1>
+        <h2>Recent Activity</h2>
         <h3>Current time: </h3>{{currentTime}}
 
         <h3>Tweets per minute:</h3> {{#if tweetsPerMinute}} {{tweetsPerMinute.count}} {{/if}}
@@ -22,7 +22,7 @@
     </script>
 
     <script id="interestingTweetsTemplate" type="text/ractive">
-        <h1>Interesting Tweets</h1>
+        <h2>Interesting Tweets</h2>
 
         {{#if tweets}}
             {{#tweets}}
@@ -37,17 +37,28 @@
         {{/if}}
     </script>
 
+    <h1>Twitter dashboard exercises</h1>
+    <p>
+        This is a dashboard for displaying real-time information from a stream of tweets. The source data
+        is a recording of tweets during the recent Australia vs India World Cup semi final - to give us
+        a topic we can expect lots of tweets on.
+    </p>
+
+
     <div class="section">
-        <h1>Source Data</h1>
+        <h2>Source Data</h2>
+        <div>Browse to the twitter_data/Aus-vs-India-tweets.json file</div>
         <div>
-            <input type="file" id="files" />
-            <button id="goButton">Go</button>
-            <button id="stopButton">Stop</button>
-            <label><input type="checkbox" id="useSampleSolutions" />Use sample solutions</label>
+            <input type="file" id="files"/>
+            <button id="startStopButton">Start</button>
+            <select id="exerciseSource">
+                <option value="exercises">Run my code</option>
+                <option value="solutions">Run sample solutions</option>
+            </select>
         </div>
         <div>
             Time multiplier:
-            <input type="range" min="0" max="1000" id="timeMultiplier" value="1" />
+            <input type="range" min="0" max="100" id="timeMultiplier" value="1" />
             <span id="multiplierValue"></span>x
         </div>
     </div>

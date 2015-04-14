@@ -1,9 +1,9 @@
 function ExerciseRunner() {
+    this.started = false;
 }
 
 ExerciseRunner.prototype.stopTweetStream = function() {
     this.tweetSubscription.dispose();
-    this.started = false;
     console.log('Tweet stream stopped.');
 }
 
@@ -15,15 +15,12 @@ ExerciseRunner.prototype.multiplierChanged = function() {
 ExerciseRunner.prototype.setupEventHandlers = function() {
     this.timeMultiplier = document.getElementById('timeMultiplier');
     this.multiplierSpan = document.getElementById('multiplierValue');
-    this.useSampleSolutions = document.getElementById('useSampleSolutions');
+    this.exerciseSource = document.getElementById('exerciseSource');
 
     this.timeMultiplier.onchange = this.multiplierChanged.bind(this);
 
-    var goButton = document.getElementById('goButton');
-    goButton.onclick = this.playPause.bind(this);
-
-    var stopButton = document.getElementById('stopButton');
-    stopButton.onclick = this.stopTweetStream.bind(this);
+    this.startStopButton = document.getElementById('startStopButton');
+    this.startStopButton.onclick = this.startStop.bind(this);
 }
 
 ExerciseRunner.prototype.createTweetStream = function() {
@@ -45,24 +42,16 @@ ExerciseRunner.prototype.createTweetStream = function() {
     filereader.readAsText(file);
 }
 
-ExerciseRunner.prototype.playPause = function () {
+ExerciseRunner.prototype.startStop = function () {
     // This is exactly the kind of junk code Rx is better at
 
-    if (!this.started) {
-        this.started = true;
-        this.paused = false;
+    if (!this.started)
         this.createTweetStream();
-    }
-    else {
-        this.paused = !this.paused;
+    else
+        this.stopTweetStream();
 
-        var currentMultiplier = this.timeMultiplier.value;
-        this.timeMultiplier.value = this.paused ? "0" : this.lastMultiplier;
-        this.lastMultiplier = currentMultiplier;
-        this.multiplierChanged();
-
-        console.log('Tweet stream ' + (this.paused ? "paused" : "resumed"));
-    }
+    this.started = !this.started;
+    this.startStopButton.innerHTML = this.started ? 'Stop' : 'Start';
 }
 
 ExerciseRunner.prototype.runTweetStream = function () {
@@ -72,7 +61,7 @@ ExerciseRunner.prototype.runTweetStream = function () {
     this.tweetStream.start();
     var scheduler = this.scheduler = this.tweetStream.schedulerProvider.scheduler;
 
-    var useSolution = this.useSampleSolutions.checked;
+    var useSolution = this.exerciseSource.selectedIndex === 1;
     var exerciseImplementations = useSolution ? new ExerciseSolutions() : new Exercises();
 
     var tweetsPerMinute = exerciseImplementations.tweetsPerMinute(this.tweetStream.stream, scheduler);

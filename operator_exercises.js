@@ -145,6 +145,9 @@ function exercise10_objectsAsValues() {
 // *** If you're new to operators like map and filter and want to learn more:
 // There's a good interactive tutorial at http://reactive-extensions.github.io/learnrx/
 //
+// It runs through the operators step by step, starting from loops, to show you how they work.
+// Just remember to make sure you have your console window visible, as it displays its results there.
+//
 //
 // *** If you liked playing with these operators and want to try more:
 // There are many more to look at. Some more interesting ones:
@@ -173,9 +176,6 @@ function exercise10_objectsAsValues() {
 // The dashboard runs through a stream of twitter tweets and generates some stats out of the data.
 
 
-// It runs through step by step, starting from for loops and showing how these kind of operators
-// can help make it easy to do more complex work on data - even just data in arrays.
-// Just remember to make sure you have your console window visible, as it displays its results there.
 
 
 
