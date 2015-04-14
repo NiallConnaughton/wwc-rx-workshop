@@ -90,16 +90,16 @@ ExerciseRunner.prototype.showLatestUpdate = function (tweet) {
 }
 
 ExerciseRunner.prototype.updateTweetsPerMinute = function (tpm) {
-    this.recentActivity.tweetsPerMinute = {
+    this.exerciseViewModel.tweetsPerMinute = {
         timestamp: moment(this.scheduler.now()).format(timestampFormat),
         count: tpm
     };
-    this.recentActivityRactive.update();
+    this.exercisesRactive.update();
 }
 
 ExerciseRunner.prototype.updateRecentActivity = function (tweet) {
-    this.recentActivity.recentTweet = tweet;
-    this.recentActivityRactive.update();
+    this.exerciseViewModel.recentTweet = tweet;
+    this.exercisesRactive.update();
 }
 
 ExerciseRunner.prototype.updateTime = function (time) {
@@ -108,8 +108,8 @@ ExerciseRunner.prototype.updateTime = function (time) {
 }
 
 ExerciseRunner.prototype.updateInterestingTweets = function (tweets) {
-    this.interestingTweets.tweets = tweets;
-    this.interestingTweetsRactive.update();
+    this.exerciseViewModel.interestingTweets = tweets;
+    this.exercisesRactive.update();
 }
 
 ExerciseRunner.prototype.run = function () {
@@ -123,21 +123,21 @@ ExerciseRunner.prototype.run = function () {
         data: this.latestUpdate
     });
 
-    this.recentActivity = { };
+    this.exerciseViewModel = { };
     this.recentActivityRactive = new Ractive(
         {
-            el: '#recentActivityContainer',
-            template: '#recentActivityTemplate',
-            data: this.recentActivity
+            el: '#exercisesContainer',
+            template: '#exercisesTemplate',
+            data: this.exerciseViewModel
         });
 
-    this.interestingTweets = {};
-    this.interestingTweetsRactive = new Ractive(
-        {
-            el: '#interestingTweetsContainer',
-            template: '#interestingTweetsTemplate',
-            data: this.interestingTweets
-        });
+    // this.interestingTweets = {};
+    // this.interestingTweetsRactive = new Ractive(
+    //     {
+    //         el: '#interestingTweetsContainer',
+    //         template: '#interestingTweetsTemplate',
+    //         data: this.interestingTweets
+    //     });
 }
 
 timestampFormat = 'YYYY-MM-DD HH:mm:ss';
