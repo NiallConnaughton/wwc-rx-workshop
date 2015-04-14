@@ -41,9 +41,7 @@ Exercises.prototype.exercise2_numberOfTweetsPerMinute = function (tweetStream, s
     /*
         Exercise 2: Display the number of tweets per minute
 
-        Implement a function to use tweetStream to work out how many tweets per minute
-        we're seeing. We want the return value to be a stream of the number of tweets
-        that have happened in the last minute.
+        Let's work out how many tweets per minute we're seeing.
 
         Remember to use the scheduler as the last argument for any timing based operators.
 
@@ -60,7 +58,29 @@ Exercises.prototype.exercise2_numberOfTweetsPerMinute = function (tweetStream, s
 }
 
 Exercises.prototype.exercise3_findInterestingTweets = function (tweetStream, scheduler) {
-    // Pick high retweet count, favourite count, tweets from user with many followers
+    /*
+        Exercise 3: Pick out some interesting tweets
+
+        The tweet objects contain more than just the author, time and text. We can see if the tweet is a retweet,
+        how many times it's been retweeted, how many followers the author has, and how many times the tweet has
+        been favourited.
+
+        A starting point is to look for tweets from authors with 100,000 followers, or tweets that have been
+        retweeted or favourited 100 times. This is a good exercise to experiment with.
+
+        The main operator we'll need here is filter:
+            - http://tinyurl.com/rxjsdoc/where.md
+            - http://reactivex.io/documentation/operators/filter.html
+
+        Have a look at a sample tweet in twitter_data/SingleTweet.json to see the available data and field names.
+
+        A couple of bonus things to think about, specifically for retweets:
+            - Do we care who the retweeter is? Can we change our stream so that we
+              show the original tweet instead of the retweet, so we show the original author?
+
+            - Tweets can be retweeted many times, so we may end up showing the same tweet
+              in our interesting tweets list more than once. Can we get a distinct list of tweets somehow?
+    */
 
     // Your code goes here!
     return Rx.Observable.never();
