@@ -1,15 +1,10 @@
-function TwitterStream(sourceFeedContent) {
+function TwitterStream() {
     this.schedulerProvider = new ReplayScheduler();
     this.stopped = new Rx.Subject();
 
     var scheduler = this.schedulerProvider.scheduler;
-    var tweetJsons = sourceFeedContent.split('\n');
-    var self = this;
-
-    var tweets = tweetJsons
-                    .filter(function (line) { return line !== ""; })
-                    .map(this.parseTweet.bind(this))
-
+    var tweets = tweetSourceData;
+    tweets.forEach(this.updateTweet.bind(this));
     this.startTime = tweets[0].timestamp;
 
     var combinedTweets = Rx.Observable.for(tweets, function (t) {
@@ -17,20 +12,17 @@ function TwitterStream(sourceFeedContent) {
                             .map(function () { return t; });
     });
 
+    var self = this;
     this.stream = combinedTweets
                     .takeUntil(this.stopped)
                     .finally(function () { self.schedulerProvider.stop(); })
                     .share();
 }
 
-TwitterStream.prototype.parseTweet = function (json) {
-    tweet = JSON.parse(json);
-
+TwitterStream.prototype.updateTweet = function (tweet) {
     this.setTimestamps(tweet);
     if (tweet.retweetedTweet)
         this.setTimestamps(tweet.retweetedTweet);
-
-    return tweet;
 }
 
 TwitterStream.prototype.setTimestamps = function (tweet) {

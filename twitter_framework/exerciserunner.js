@@ -7,9 +7,11 @@ ExerciseRunner.prototype.stopTweetStream = function() {
     console.log('Tweet stream stopped.');
 }
 
-ExerciseRunner.prototype.multiplierChanged = function() {
-    this.tweetStream.schedulerProvider.timeMultiplier = this.timeMultiplier.value;
-    this.multiplierSpan.innerHTML = this.timeMultiplier.value;
+ExerciseRunner.prototype.multiplierChanged = function () {
+    if (this.tweetStream) {
+        this.tweetStream.schedulerProvider.timeMultiplier = this.timeMultiplier.value;
+        this.multiplierSpan.innerHTML = this.timeMultiplier.value;
+    }
 }
 
 ExerciseRunner.prototype.setupEventHandlers = function() {
@@ -24,22 +26,10 @@ ExerciseRunner.prototype.setupEventHandlers = function() {
 }
 
 ExerciseRunner.prototype.createTweetStream = function() {
-    var fileInput = document.getElementById('files');
-    var file = fileInput.files[0];
-    var filereader = new FileReader();
-    var self = this;
-
-    filereader.onload = function (e) {
-        var text = filereader.result;
-
-        self.tweetStream = new TwitterStream(text);
-        self.tweetSubscription = new Rx.CompositeDisposable();
-        self.tweetSubscription.add(Rx.Disposable.create(self.tweetStream.stop.bind(self.tweetStream)));
-
-        self.runTweetStream();
-    };
-
-    filereader.readAsText(file);
+    this.tweetStream = new TwitterStream();
+    this.tweetSubscription = new Rx.CompositeDisposable();
+    this.tweetSubscription.add(Rx.Disposable.create(this.tweetStream.stop.bind(this.tweetStream)));
+    this.runTweetStream();
 }
 
 ExerciseRunner.prototype.startStop = function () {
@@ -130,14 +120,6 @@ ExerciseRunner.prototype.run = function () {
             template: '#exercisesTemplate',
             data: this.exerciseViewModel
         });
-
-    // this.interestingTweets = {};
-    // this.interestingTweetsRactive = new Ractive(
-    //     {
-    //         el: '#interestingTweetsContainer',
-    //         template: '#interestingTweetsTemplate',
-    //         data: this.interestingTweets
-    //     });
 }
 
 timestampFormat = 'YYYY-MM-DD HH:mm:ss';
