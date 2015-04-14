@@ -35,7 +35,7 @@
             We saw an operator from the previous exercises that could help here.
         </p>
 
-        <h3>Latest tweet:</h3>
+        <h4>Latest tweet:</h4>
         {{#if recentTweet}}
             <div><span class="twitterHandle">@{{recentTweet.screenName}}</span> {{recentTweet.displayTimestamp}}</div>
             <div>{{recentTweet.text}}</div>
@@ -45,29 +45,43 @@
 
         <div class='section'>
             <h3>Exercise 2</h3>
-            How much Twitter activity are we seeing?
+            Measuring tweet activity
 
             <p>
+                How much twitter activity are we seeing? How does the level of activity change over time?
                 Let's get a count of the number of tweets per minute.
+
+                Time to put the buffer operator to use! We'll also have to convert those buffers into a count of tweets somehow.
             </p>
-            <h3>Tweets per minute:</h3> {{#if tweetsPerMinute}} {{tweetsPerMinute.count}} {{/if}}
+            <h4 style="display:inline">Tweets per minute:</h4> {{tweetsPerMinute.count}}
         </div>
 
         <div class='section'>
 
-        <h2>Interesting Tweets</h2>
+            <h3>Exercise 3</h3>
+            Picking out interesting tweets
 
-        {{#if tweets}}
-            {{#tweets}}
-                <div><span class="twitterHandle">@{{screenName}}</span> {{displayTimestamp}}</div>
-                <div>
-                    <span>{{followers}} followers</span>
-                    <span>{{retweetCount}} retweets</span>
-                    <span>{{favouriteCount}} favourites</span>
-                </div>
-                <div>{{text}}</div>
-            {{/tweets}}
-        {{/if}}
+            <p>
+                We've got a lot of data in each tweet - the author, number of followers, number of retweets and favourites, etc.
+                Let's pick out specific tweets that are likely to be interesting. This might be useful for someone deciding which tweets
+                to show during a broadcast.
+            </p>
+            <p>
+                Start with a threshold of 100,000 followers, 100 retweets or 100 favourites. But this is a good exercise to experiment
+                with.
+            </p>
+
+            {{#if tweets}}
+                {{#tweets}}
+                    <div><span class="twitterHandle">@{{screenName}}</span> {{displayTimestamp}}</div>
+                    <div>
+                        <span>{{followers}} followers</span>
+                        <span>{{retweetCount}} retweets</span>
+                        <span>{{favouriteCount}} favourites</span>
+                    </div>
+                    <div>{{text}}</div>
+                {{/tweets}}
+            {{/if}}
 
         </div>
     </script>
@@ -115,7 +129,7 @@
 
     </div>
 
-    <div id="latestUpdateContainer" class="section"></div>
+    <div id="latestUpdateContainer" class="section" style="min-height:170px"></div>
     <div id="exercisesContainer"></div>
 
     </div>
