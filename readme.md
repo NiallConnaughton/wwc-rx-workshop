@@ -1,5 +1,5 @@
 #Reactive Extensions (Rx) Workshop
-by Niall Connaughton (@nconnaughton)
+by Niall Connaughton ([@nconnaughton](https://twitter.com/nconnaughton))
 
 
 ----------
