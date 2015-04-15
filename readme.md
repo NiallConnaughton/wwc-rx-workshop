@@ -59,4 +59,4 @@ If you are looking to learn more, there are some great resources out there to le
 - The [RxJS book](http://xgrommx.github.io/rx-book/)
 - [Intro to Rx](http://introtorx.com/) - a .Net oriented book, but well worth a read for any version of Rx
 
-If you have questions, feel free to contact me on twitter: @nconnaughton
+If you have questions, feel free to contact me on twitter: [@nconnaughton](https://twitter.com/nconnaughton)
