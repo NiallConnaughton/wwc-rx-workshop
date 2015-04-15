@@ -7,13 +7,13 @@
     <link rel="stylesheet" href="twitter_dashboard.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container" style="max-width:1024px">
         <script id="tweetsPerMinuteTemplate" type="text/ractive">
             <p>Tweets per minute: <span class="timestamp">{{timestamp}}</span> - {{tweetsPerMinute}}</p>
         </script>
 
         <script id="latestUpdateTemplate" type="text/ractive">
-            <div class="panel panel-warning">
+            <div class="panel panel-warning" style="min-height:170px">
                 <div class="panel-heading">
                     <h4>Latest tweet from the stream</h4>
                 </div>
@@ -26,6 +26,7 @@
                     </div>
                     {{/if}}
                 </div>
+            </div>
         </script>
 
         <script id="exercisesTemplate" type="text/ractive">
@@ -136,13 +137,13 @@
                     </p>
 
                     <button class="btn btn-default" id="startStopButton">Start</button>
-                    Speed: <span id="multiplierValue">1</span>x
+                    <div style="float:right">Speed: <span id="multiplierValue">1</span>x</div>
                     <input class="form-inline" type="range" min="0" max="100" id="timeMultiplier" value="1" />
                 </li>
             </ul>
         </div>
 
-        <div id="latestUpdateContainer" class="section" style="min-height:170px"></div>
+        <div id="latestUpdateContainer"></div>
         <div id="exercisesContainer"></div>
 
     </div>

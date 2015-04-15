@@ -12,7 +12,7 @@ function Exercises() { }
 
                       You need to use the scheduler for any operators you use that
                       involve timing - like sample, bufferWithTime, window, timer, etc.
-                      Then these operators will respond when you increase the speed of
+                      Then these operators will respond when you change the speed of
                       the tweet stream.
 
     Each exercise needs to return a new stream that we can subscribe to and display
