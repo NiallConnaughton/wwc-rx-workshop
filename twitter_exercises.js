@@ -68,6 +68,8 @@ Exercises.prototype.exercise3_findInterestingTweets = function (tweetStream, sch
         A starting point is to look for tweets from authors with 100,000 followers, or tweets that have been
         retweeted or favourited 100 times. This is a good exercise to experiment with.
 
+        The dashboard will use your interesting tweets stream to show the interesting tweets from the last minute.
+
         The main operator we'll need here is filter:
             - http://tinyurl.com/rxjsdoc/where.md
             - http://reactivex.io/documentation/operators/filter.html
@@ -85,3 +87,45 @@ Exercises.prototype.exercise3_findInterestingTweets = function (tweetStream, sch
     // Your code goes here!
     return Rx.Observable.never();
 }
+
+/*
+    That's the end of the twitter exercises. But if you're looking for more ideas for what you can do with
+    the data, here are some:
+
+        - Display a count of the total number of tweets seen so far. You could use 'scan', or a particular
+          version of 'map' for this.
+
+        - A running stream of the most retweeted tweet so far. Have a look at 'scan' for this.
+
+        - Identify sudden spikes in the number of tweets coming through. You could reuse your tweets per
+          minute calculator so you can compare the current and previous minute's traffic. To get a stream
+          with both the previous and current values, you could use 'scan' (quite a powerful operator!).
+          Then you need to pick out cases where the current traffic is significantly different from previous.
+
+        - Lastly - a big one: Pick out interesting tweets following traffic spikes.
+          
+          Imagine something major has just happened on twitter (in our cricket example, it could be a wicket,
+          or a six, or a century, etc). The incident causes a sudden jump in traffic, which you recognise
+          from the solution to the exercise above.
+
+          Lots of people are now talking, so what if we could detect major events through traffic, then
+          pull out tweets over the next few minutes from people with many followers (eg celebrities, politicians),
+          or tweets with lots of retweets.
+
+          With this, we could have a really powerful indicator of major events and what people are talking
+          about. This could pick up news events as they happen.
+
+          The good thing about Rx is that we can build on all the previous work you've done, so implementing
+          this is only a few extra operators - probably just flatMap and takeUntil.
+
+
+
+    I hope you found the exercises useful. If you're interested in learning more, here are some starting points:
+
+        - http://reactivex.io/
+        - https://github.com/Reactive-Extensions/RxJS
+        - http://introtorx.com/ - a good, free book written on Rx, mostly from the .Net angel, but still valuable
+                                  for users of other languages
+
+    If you'd like to get in touch, feel free: nconnaughton@gmail.com
+*/
