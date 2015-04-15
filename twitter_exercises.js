@@ -124,8 +124,9 @@ Exercises.prototype.exercise3_findInterestingTweets = function (tweetStream, sch
 
         - http://reactivex.io/
         - https://github.com/Reactive-Extensions/RxJS
+        - http://xgrommx.github.io/rx-book/
         - http://introtorx.com/ - a good, free book written on Rx, mostly from the .Net angel, but still valuable
                                   for users of other languages
 
-    If you'd like to get in touch, feel free: nconnaughton@gmail.com
+    If you'd like to get in touch, feel free to grab me on twitter: @nconnaughton
 */
