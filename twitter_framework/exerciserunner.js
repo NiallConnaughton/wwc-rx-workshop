@@ -122,6 +122,6 @@ ExerciseRunner.prototype.run = function () {
         });
 }
 
-timestampFormat = 'YYYY-MM-DD HH:mm:ss';
+timestampFormat = 'h:mm:ss A - DD MMM YYYY';
 var exerciseRunner = new ExerciseRunner();
 window.onload = exerciseRunner.run.bind(exerciseRunner);

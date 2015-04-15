@@ -1,0 +1,28 @@
+.twitterHandle {
+	font-weight: bold;
+}
+
+.twitterTimestamp, .twitterMetadata {
+  color: #888888;
+}
+
+.panel {
+	margin-bottom: 10px;
+}
+
+.tweetDetails {
+	margin-left: 5px;
+	margin-bottom: 5px;
+	padding: 5px 10px;
+	background-color: rgba(200, 234, 182, 0.10);
+	border-radius: 5px;
+  min-height: 100px;
+}
+
+.tweetWithMetadata {
+  min-height: 120px;
+}
+
+.latestTweet {
+  min-height: 170px;
+}
