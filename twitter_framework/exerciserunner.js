@@ -17,7 +17,7 @@ ExerciseRunner.prototype.multiplierChanged = function () {
 ExerciseRunner.prototype.setupEventHandlers = function() {
     this.timeMultiplier = document.getElementById('timeMultiplier');
     this.multiplierSpan = document.getElementById('multiplierValue');
-    this.exerciseSource = document.getElementById('exerciseSource');
+    this.useSampleSolutionsButton = document.getElementById('useSampleSolutionsButton');
 
     this.timeMultiplier.onchange = this.multiplierChanged.bind(this);
 
@@ -52,7 +52,7 @@ ExerciseRunner.prototype.runTweetStream = function () {
     this.tweetStream.start();
     var scheduler = this.scheduler = this.tweetStream.schedulerProvider.scheduler;
 
-    var useSampleSolutions = this.exerciseSource.selectedIndex === 1;
+    var useSampleSolutions = this.useSampleSolutionsButton.checked;
     var exerciseImplementations = useSampleSolutions ? new ExerciseSolutions() : new Exercises();
 
     this.tweetSubscription.add(this.tweetStream.stream.subscribe(this.showLatestUpdate.bind(this)));

@@ -4,6 +4,7 @@
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
     <link rel="stylesheet" href="bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="twitter_dashboard.css">
 </head>
 <body>
     <div class="container">
@@ -17,16 +18,15 @@
                     <h4>Latest tweet from the stream</h4>
                 </div>
                 <div class="panel-body">
-            
-            <!-- <h3>Current time: </h3>{{currentTime}} -->
-                {{#if tweet}}
-                    <div><span class="twitterHandle">@{{tweet.screenName}}</span> {{tweet.displayTimestamp}}</div>
-                    <div>{{tweet.text}}</div>
-                {{/if}}
+                    <!-- <h3>Current time: </h3>{{currentTime}} -->
+                    {{#if tweet}}
+                    <div class="tweetDetails">
+                        <div><span class="twitterHandle">@{{tweet.screenName}}</span> {{tweet.displayTimestamp}}</div>
+                        <div>{{tweet.text}}</div>
+                    </div>
+                    {{/if}}
                 </div>
-            </div>
         </script>
-
 
         <script id="exercisesTemplate" type="text/ractive">
             <div class="panel panel-info">
@@ -34,16 +34,18 @@
                     <h4>Exercise 1 - Slowing things down a bit</h4>
                 </div>
                 <div class="panel-body">
-                <p>
-                    The tweets arrive so quickly, we can't read them! Let's take a tweet from the stream every ten seconds instead.
-                    We saw an operator from the previous exercises that could help here.
-                </p>
+                    <p>
+                        The tweets arrive so quickly, we can't read them! Let's take a tweet from the stream every ten seconds instead.
+                        We saw an operator from the previous exercises that could help here.
+                    </p>
 
-                <h4>Latest tweet:</h4>
-                {{#if recentTweet}}
-                    <div><span class="twitterHandle">@{{recentTweet.screenName}}</span> {{recentTweet.displayTimestamp}}</div>
-                    <div>{{recentTweet.text}}</div>
-                {{/if}}
+                    <h3><small>Recent tweet:</small></h3>
+                    {{#if recentTweet}}
+                    <div class="tweetDetails">
+                        <div><span class="twitterHandle">@{{recentTweet.screenName}}</span> {{recentTweet.displayTimestamp}}</div>
+                        <div>{{recentTweet.text}}</div>
+                    </div>
+                    {{/if}}
                 </div>
             </div>
 
@@ -52,13 +54,12 @@
                     <h4>Exercise 2 - Measuring tweet activity</h4>
                 </div>
                 <div class="panel-body">
-                
-                <p>
-                How much twitter activity are we seeing? How does the level of activity change over time?
-                Let's get a count of the number of tweets per minute.
 
-                </p>
-                <h4 style="display:inline">Tweets per minute:</h4> {{tweetsPerMinute.count}}
+                    <p>
+                        How much twitter activity are we seeing? How does the level of activity change over time?
+                        Let's get a count of the number of tweets per minute.
+                    </p>
+                    <h3 style="display:inline"><small>Tweets per minute: {{tweetsPerMinute.count}}</small></h3>
                 </div>
             </div>
 
@@ -67,24 +68,27 @@
                     <h4>Exercise 3 - Picking out interesting tweets</h4>
                 </div>
                 <div class="panel-body">
-                
-                <p>
-                    We've got a lot of data in each tweet - the author, number of followers, number of retweets and favourites, etc.
-                    Let's pick out specific tweets that are likely to be interesting. This might be useful for someone deciding which tweets
-                    to show during a broadcast.
-                </p>
-                <p>
-                    Start with a threshold of 100,000 followers, 100 retweets or 100 favourites. But this is a good exercise to experiment
-                    with.
-                </p>
-                A couple of optional extras to think about to do with retweets:
-                <ul>
-                    <li>How can we use the original tweet, not the retweet, so we see the original author?</li>
-                    <li>How can we filter out duplicates when someone retweets a tweet we've already displayed here?</li>
-                </ul>
 
-                {{#if tweets}}
-                    {{#tweets}}
+                    <p>
+                        We've got a lot of data in each tweet - the author, number of followers, number of retweets and favourites, etc.
+                        Let's pick out specific tweets that are likely to be interesting. This might be useful for someone deciding which tweets
+                        to show during a broadcast.
+                    </p>
+                    <p>
+                        Start with a threshold of 100,000 followers, 100 retweets or 100 favourites. But this is a good exercise to experiment
+                        with.
+                    </p>
+                    A couple of optional extras to think about to do with retweets:
+                    <ul>
+                        <li>How can we use the original tweet, not the retweet, so we see the original author?</li>
+                        <li>How can we filter out duplicates when someone retweets a tweet we've already displayed here?</li>
+                    </ul>
+
+                    <h3><small>Recent interesting tweets:</small></h3>
+
+                    {{#if interestingTweets}}
+                    {{#interestingTweets}}
+                    <div class="tweetDetails">
                         <div><span class="twitterHandle">@{{screenName}}</span> {{displayTimestamp}}</div>
                         <div>
                             <span>{{followers}} followers</span>
@@ -92,53 +96,54 @@
                             <span>{{favouriteCount}} favourites</span>
                         </div>
                         <div>{{text}}</div>
-                    {{/tweets}}
-                {{/if}}
-                </div>
+                        {{/tweets}}
+                        {{/if}}
+                    </div>
             </div>
         </script>
 
         <div class="jumbotron">
-                <h2>Twitter dashboard exercises</h2>
-                <p>
-                    This is a dashboard for displaying real-time information from a stream of tweets. The source data
-                    is a recording of tweets during the recent Australia vs India World Cup semi final - 
-                    a topic we can expect lots of tweets on.
-                </p>
+            <h2>Twitter dashboard exercises</h2>
+            <p>
+                This is a dashboard for displaying real-time information from a stream of tweets. The source data
+                is a recording of tweets during the recent Australia vs India World Cup semi final -
+                a topic we can expect lots of tweets on.
+            </p>
         </div>
-    <div class="panel panel-success">
-        <div class="panel-heading">
-            <h4>Setup</h4>
+
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h4>Setup</h4>
+            </div>
+            <div class="panel-body">
+                <p>Choose between running your code or the sample solutions, so you can compare the results.</p>
+
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-success active">
+                        <input type="radio" name="options" autocomplete="off" checked>Run my solutions
+                    </label>
+                    <label class="btn btn-success">
+                        <input type="radio" name="options" id="useSampleSolutionsButton" autocomplete="off">Run sample solutions
+                    </label>
+
+                </div>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <p>
+                        Hit Start to begin the tweet stream. You can control the speed of the stream with the slider.
+                        You can stop and restart at any time.
+                    </p>
+
+                    <button class="btn btn-default" id="startStopButton">Start</button>
+                    Speed: <span id="multiplierValue">1</span>x
+                    <input class="form-inline" type="range" min="0" max="100" id="timeMultiplier" value="1" />
+                </li>
+            </ul>
         </div>
-        <div class="panel-body">
-            <p>Choose between running your code or the sample solutions, so you can compare the results.</p>
 
-            <div>
-                Which exercise solutions?
-                <select id="exerciseSource">
-                    <option value="exercises">Run my solutions</option>
-                    <option value="solutions">Run sample solutions</option>
-                </select>
-
-            </div>   
-        </div>
-        <ul class="list-group">
-         <li class="list-group-item">
-            <p>Hit Start to begin the tweet stream. You can control the speed of the stream with the slider.
-            You can stop and restart at any time.</p>
-
-
-            <button class="btn btn-default" id="startStopButton">Start</button>
-            Speed:
-            <input class="form-inline" type="range" min="0" max="100" id="timeMultiplier" value="1" />
-            <span id="multiplierValue">1</span>x
-         </li>
-         </ul>
-    </div>
-
-
-    <div id="latestUpdateContainer" class="section" style="min-height:170px"></div>
-    <div id="exercisesContainer"></div>
+        <div id="latestUpdateContainer" class="section" style="min-height:170px"></div>
+        <div id="exercisesContainer"></div>
 
     </div>
 
