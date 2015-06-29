@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Rx Workshop : A workshop on the Reactive Extensions library for the Women Who Code Sydney group">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Rx Workshop</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/NiallConnaughton/wwc-rx-workshop">View on GitHub</a>
+
+          <h1 id="project_title">Rx Workshop</h1>
+          <h2 id="project_tagline">A workshop on the Reactive Extensions library for the Women Who Code Sydney group</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/NiallConnaughton/wwc-rx-workshop/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/NiallConnaughton/wwc-rx-workshop/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="reactive-extensions-rx-workshop" class="anchor" href="#reactive-extensions-rx-workshop" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reactive Extensions (Rx) Workshop</h1>
+
+<p>by Niall Connaughton (<a href="https://twitter.com/nconnaughton">@nconnaughton</a>)</p>
+
+<hr>
+
+<p>This is a set of exercises to give you a feel for the <a href="https://github.com/Reactive-Extensions">Reactive Extensions library</a>, and what you can do with it. We'll be using <a href="https://github.com/Reactive-Extensions/RxJS">RxJS</a>, but the library is available for many platforms, including .Net, Java, Python, Ruby, C++, etc.</p>
+
+<p>Some resources that might be helpful during the workshop:</p>
+
+<ul>
+<li>The <a href="https://github.com/Reactive-Extensions/RxJS/tree/master/doc/api/core/operators">RxJS operator specifications</a>
+</li>
+<li>The <a href="http://reactivex.io/documentation/operators.html">ReactiveX operator descriptions</a>
+</li>
+<li><a href="http://rxmarbles.com/">RxMarbles</a></li>
+</ul>
+
+<p>The workshop is in two sections:</p>
+
+<ul>
+<li>An introduction to using operators in Javascript, and some of the common operators</li>
+<li>An application of Rx on a stream of tweets</li>
+</ul>
+
+<hr>
+
+<h3>
+<a id="introduction-to-rx-operators" class="anchor" href="#introduction-to-rx-operators" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction to Rx Operators</h3>
+
+<p>For this section of the workshop, open the <strong>operator_exercises.html</strong> page in your browser, and the <strong>operator_exercises.js</strong> file in your editor.</p>
+
+<p>Most of the work with Rx is done through chaining operators together. It's a kind of fluent interface. In the first part of the workshop, we'll work through some example operators that are commonly used in Rx:</p>
+
+<ul>
+<li>
+<a href="https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/subscribe.md">Subscribe</a> - listen to each event on a stream</li>
+<li>
+<a href="https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/select.md">Map</a> - convert each event on a stream to a new value (eg: multiply it by two!)</li>
+<li>
+<a href="https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/where.md">Filter</a> - filter the stream to only events you care about (eg: picking odd numbers from a stream)</li>
+<li>
+<a href="https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/sample.md">Sample</a> - taking a sample element from a stream periodically</li>
+<li>
+<a href="https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/bufferwithtime.md">Buffer</a> - dividing a stream into chunks for a period of time</li>
+</ul>
+
+<p>Once we've finished the introduction to the operators, you can choose where to go next:</p>
+
+<ul>
+<li>If you're new to operators like map and filter and want to learn more, you can do this <a href="http://reactive-extensions.github.io/learnrx/">interactive tutorial</a> which takes you from first steps through many of the operators.</li>
+<li>If you liked playing with these operators and want to try more, there are many more to look at. You can explore the list of operators on <a href="https://github.com/Reactive-Extensions/RxJS/tree/master/doc/api/core/operators">RxJS</a> and <a href="http://reactivex.io/documentation/operators.html">ReactiveX</a>.</li>
+<li>Jump into using Rx to work with a stream of tweets in the next section of the workshop</li>
+</ul>
+
+<hr>
+
+<h3>
+<a id="applying-rx-to-a-twitter-stream" class="anchor" href="#applying-rx-to-a-twitter-stream" aria-hidden="true"><span class="octicon octicon-link"></span></a>Applying Rx to a Twitter Stream</h3>
+
+<p>For this part of the workshop, open the <strong>twitter_dashboard.html</strong> file in your browser, and the <strong>twitter_exercises.js</strong> file in your editor.</p>
+
+<p>This set of exercises uses a recording of twitter data to recreate a live stream of tweets. We'll see how we can use Rx to manipulate the stream to let us generate real-time information from it.</p>
+
+<p>There is a set of sample solutions for the twitter exercises. You can choose to run the sample solutions on the dashboard to have a look at what output they produce. The solutions are in the <strong>twitter_exercise_solutions/twittersolutions.js</strong> file. One thing to keep in mind: with so many operators in Rx, there are often many ways to solve a problem. So if your solution doesn't match the sample solutions, that's not a bad thing!</p>
+
+<p>Some of the exercises involve using operators that work on periods of time. So that we don't have to wait around for minutes to pass by just to see our output, we can speed up the recorded tweets using the slider at the top of the page. Also, you can pause playback by dragging the speed to 0.</p>
+
+<p>If you get to the end of the twitter exercises and are eager to keep going, there are some ideas at the end of the <strong>twitter_exercises.js</strong> file for what else you could do with this data.</p>
+
+<hr>
+
+<h3>
+<a id="after-the-workshop" class="anchor" href="#after-the-workshop" aria-hidden="true"><span class="octicon octicon-link"></span></a>After the Workshop</h3>
+
+<p>If you are looking to learn more, there are some great resources out there to learn more from:</p>
+
+<ul>
+<li>The <a href="https://github.com/Reactive-Extensions/RxJS">RxJS page</a> has lots of information, links to tutorials, books, and videos from NetFlix, etc. It also has a thorough <a href="https://github.com/Reactive-Extensions/RxJS/tree/master/doc">documentation section</a>, including <a href="https://github.com/Reactive-Extensions/RxJS/tree/master/doc/api/core/operators">details of all the operators</a>.</li>
+<li>
+<a href="http://reactivex.io/">ReactiveX</a> has a good description of the operators, giving details of the aliases in each language. They also have some great interactive <a href="http://rxmarbles.com/">marble diagrams</a>.</li>
+<li>The <a href="http://xgrommx.github.io/rx-book/">RxJS book</a>
+</li>
+<li>
+<a href="http://introtorx.com/">Intro to Rx</a> - a .Net oriented book, but well worth a read for any version of Rx</li>
+</ul>
+
+<p>If you have questions, feel free to contact me on twitter: <a href="https://twitter.com/nconnaughton">@nconnaughton</a></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Rx Workshop maintained by <a href="https://github.com/NiallConnaughton">NiallConnaughton</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
