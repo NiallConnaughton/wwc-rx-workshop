@@ -7,6 +7,8 @@ by Niall Connaughton ([@nconnaughton](https://twitter.com/nconnaughton))
 
 This is a set of exercises to give you a feel for the [Reactive Extensions library](https://github.com/Reactive-Extensions), and what you can do with it. We'll be using [RxJS](https://github.com/Reactive-Extensions/RxJS), but the library is available for many platforms, including .Net, Java, Python, Ruby, C++, etc.
 
+You can check out the [working twitter dashboard](http://niallconnaughton.github.io/wwc-rx-workshop/workshop/twitter_dashboard.html), which gives real-time streaming analysis of the tweet stream - just switch the dashboard to the sample solutions to see them run. We'll build this dashboard in the second part of the workshop.
+
 Some resources that might be helpful during the workshop:
 
 - The [RxJS operator specifications](https://github.com/Reactive-Extensions/RxJS/tree/master/doc/api/core/operators)
